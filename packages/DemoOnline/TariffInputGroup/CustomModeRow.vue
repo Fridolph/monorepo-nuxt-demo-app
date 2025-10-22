@@ -25,10 +25,11 @@
       </div>
     </div>
     <div class="flex h-8 self-center gap-1">
-      <InputNumber
-        v-model="inputPrice"
+      <InputNumber v-model="inputPrice" fluid
         input-class="text-sm"
-        fluid
+        :min="0" :max="99999999"
+        :min-fraction-digits="2" :max-fraction-digits="8"
+        mode="currency" :currency="prjCurrency" :locale="currencyInputLocale(prjCurrency)"
         @value-change="changePrice"
       />
       <div>/kWh</div>
@@ -41,6 +42,7 @@
 </template>
 
 <script setup lang="ts">
+import type AddTimeTagDialog from './AddTimeTagDialog.vue'
 import { transToTagList } from '~/composables/projects/useSelectTariff'
 
 interface periodItem {
@@ -60,10 +62,11 @@ const props = defineProps<{
     name: string
     period: periodItem[]
     price: number | null
-  }[]
+  }
 }>()
 const emits = defineEmits(['change-name', 'change-price', 'delete-row', 'delete-tag'])
-
+const projectStore = useProjectStore()
+const { prjCurrency } = storeToRefs(projectStore)
 const inputGroupName = ref('')
 const inputPrice = ref<null | number>(null)
 const isValidRow = computed(() => {
@@ -72,17 +75,21 @@ const isValidRow = computed(() => {
 
 watch(() => props.groupName, (val) => {
   inputGroupName.value = val
-})
+}, { immediate: true })
 watch(() => props.groupPrice, (val) => {
   inputPrice.value = val
+}, { immediate: true })
+
+const taglist = computed(() => {
+  const arr = props.data.period || []
+  return transToTagList(arr)
 })
 
-const taglist = computed(() => transToTagList(props.data?.period) ?? [])
-const CustomDialogRef = inject('CustomDialogRef')
+const AddTimeTagDialogRef = inject<Ref<InstanceType<typeof AddTimeTagDialog>>>('AddTimeTagDialogRef')
 function openPeriodDialog() {
-  console.log('🚀 ~ openPeriodDialog:', props.curRadio, props.groupIndex)
   const copyData = [...props.sourceData]
-  CustomDialogRef?.value?.open(copyData, {
+  console.log('🚀 ~ openPeriodDialog:', props.curRadio, props.groupIndex)
+  AddTimeTagDialogRef?.value?.open(copyData, {
     cusList: props.cusList,
     isCustom: true,
     groupName: inputGroupName.value,

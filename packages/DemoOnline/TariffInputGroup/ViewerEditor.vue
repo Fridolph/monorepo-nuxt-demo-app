@@ -61,6 +61,7 @@ interface TimeItem {
 }
 
 const props = defineProps<{
+  type: 'fixed' | 'custom'
   sourceData: TimeItem[]
   groupNumber: number
   groupPrice: number | null
@@ -71,6 +72,7 @@ const list = ref<TimeItem[]>([])
 
 const isEnabled = (item: TimeItem) => item?.status === 0
 const isCanSub = (item: TimeItem) => item?.status === 1 && props.groupNumber === item.group
+
 const isLocked = (item: TimeItem) => item?.status === 1 && props.groupNumber !== item.group
 
 onMounted(() => {
@@ -87,14 +89,25 @@ function formatTime(time: number) {
 
 function selectTimeItem(item: TimeItem) {
   if (isLocked(item)) return
-  const newItem = {
-    value: item.value,
-    status: item.status === 0 ? 1 : 0,
-    group: isEnabled(item) ? props.groupNumber : null,
-    price: isEnabled(item) ? props.groupPrice : null,
+  let newItem: any = {}
+  if (props.type === 'fixed') {
+    newItem = {
+      ...item,
+      status: item.status === 1 ? 0 : 1,
+      group: item.status === 1 ? 0 : props.groupNumber,
+      price: item.status === 1 ? null : props.groupPrice,
+    }
+    list.value = list.value.map((i: TimeItem) => (i.value === item.value ? newItem : i)) as TimeItem[]
   }
-  list.value = list.value.map((i: TimeItem) => (i.value === item.value ? newItem : i)) as TimeItem[]
-  // console.log(newItem, list.value)
+  else if (props.type === 'custom') {
+    newItem = {
+      value: item.value,
+      status: item.status === 0 ? 1 : 0,
+      group: isEnabled(item) ? props.groupNumber : null,
+      price: isEnabled(item) ? props.groupPrice : null,
+    }
+    list.value = list.value.map((i: TimeItem) => (i.value === item.value ? newItem : i)) as TimeItem[]
+  }
   emits('on-change', newItem, list.value)
 }
 </script>

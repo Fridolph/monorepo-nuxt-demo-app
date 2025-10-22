@@ -13,7 +13,8 @@
       已选择时间段: {{ selectTimes.all }},
     </p>
 
-    <FixedEditor
+    <ViewerEditor
+      type="fixed"
       :group-number="groupIndex"
       :group-price="groupPrice"
       :source-data="workingData"
@@ -29,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import FixedEditor from './FixedEditor.vue'
+import ViewerEditor from './ViewerEditor.vue'
 
 // SelectDialog
 type TimeStatus = -1
@@ -37,23 +38,37 @@ type TimeStatus = -1
   | 1 // 待添加
   | 2 // 已添加，可删除
 
+interface CustomGroupData {
+  groupIndex: number
+  groupPrice: number | null
+  groupName?: string
+  isCustom?: boolean
+  cusList?: any[]
+}
 const emits = defineEmits(['close', 'confirm'])
 const curRadio = inject('curRadio')
 const visible = ref(false)
 const isCustom = ref(false)
+const cusList = shallowRef<any[]>([])
+const workingCusList = shallowRef<any[]>([])
 const originData = shallowRef<any[]>([]) // 保存原始数据
 const workingData = shallowRef<any[]>([]) // 用于编辑的副本
 const groupName = ref<string>('')
 const groupIndex = ref<number>(0)
 const groupPrice = ref<number | null>(null)
-function open(data: any, groupData: { groupIndex: number, groupPrice: number | null, groupName?: string, isCustom: boolean }) {
+
+function open(data: any, groupData: CustomGroupData) {
   visible.value = true
   originData.value = data
   workingData.value = JSON.parse(JSON.stringify(data))
-  groupIndex.value = groupData.groupIndex
-  groupPrice.value = groupData.groupPrice
+  groupIndex.value = groupData?.groupIndex
+  groupPrice.value = groupData?.groupPrice
   groupName.value = groupData?.groupName ?? ''
-  isCustom.value = groupData.isCustom
+
+  if (groupData?.isCustom) {
+    isCustom.value = groupData.isCustom
+    cusList.value = JSON.parse(JSON.stringify(groupData.cusList))
+  }
 }
 
 function close() {
@@ -61,8 +76,14 @@ function close() {
   workingData.value = []
 }
 function confirm() {
-  const values = []
-  emits('confirm', workingData.value)
+  const values = workingData.value.filter(v => v.group === groupIndex.value).map(v => v.value)
+  emits('confirm', workingData.value, {
+    values,
+    isCustom: isCustom.value,
+    groupName: groupName.value,
+    groupIndex: groupIndex.value,
+    groupPrice: groupPrice.value,
+  })
   close()
 }
 

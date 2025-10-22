@@ -1,7 +1,10 @@
 <template>
   <div class="row-item">
-    <div class="has-line flex h-8 self-center">
-      {{ groupName }}
+    <div class="group has-line flex h-8 self-center">
+      <InputText v-model="inputGroupName" fluid
+        class="text-sm b-transparent outline-none shadow-none group-hover:b-#E2E6EC focus:b-#dedede"
+        @value-change="changeGroupName"
+      />
     </div>
     <div class="flex flex-wrap justify-start gap-1 items-center">
       <div class="flex-1 t-tag-wrap flex gap-1 flex-wrap">
@@ -19,11 +22,12 @@
         <Icon name="material-symbols:add" size="20" />
       </div>
     </div>
-    <div class="flex h-8 self-center gap-1">
-      <InputNumber
-        v-model="inputPrice"
-        input-class="text-sm"
-        fluid
+    <div class="group flex h-8 self-center gap-1">
+      <InputNumber v-model="inputPrice" fluid
+        input-class="text-sm b-transparent outline-none shadow-none group-hover:b-#E2E6EC focus:b-#dedede"
+        :min="0" :max="99999999"
+        :min-fraction-digits="2" :max-fraction-digits="8"
+        mode="currency" :currency="prjCurrency" :locale="currencyInputLocale(prjCurrency)"
         @value-change="changePrice($event)"
       />
       <div>/kWh</div>
@@ -37,6 +41,7 @@
 
 <script setup lang="ts">
 import { transToTagList } from '~/composables/projects/useSelectTariff'
+import type AddTimeTagDialog from './AddTimeTagDialog.vue'
 
 const props = defineProps<{
   curRadio: number
@@ -44,38 +49,51 @@ const props = defineProps<{
   groupIndex: number
   sourceData: any
   color: string
-  data: {
-    status: 0 | 1
-    value: number
-    price: number | null
-  }[]
+  data: TariffSourceItem[]
 }>()
 const emits = defineEmits(['on-change'])
-
+const projectStore = useProjectStore()
+const { prjCurrency } = storeToRefs(projectStore)
 const inputPrice = ref<null | number>(null)
+
 watch(
   () => props.data,
-  (val) => {
-    if (val && val.length > 0) {
-      const priceArr = val.map(v => v.price)
+  (vals) => {
+    if (vals && vals.length > 0) {
+      const priceArr = vals.map(v => v.price)
       const p0 = priceArr[0]
       if (priceArr.every(p => p === p0)) {
         inputPrice.value = p0 as number
       }
     }
   },
-  { immediate: true },
+  { immediate: true, deep: true },
 )
+
+const inputGroupName = ref('')
+watch(() => props.groupName, (val) => {
+  inputGroupName.value = val
+}, { immediate: true })
+
+function changeGroupName(evt: string) {
+  console.log('🚀 ~ changeGroupName:', evt)
+  emits('on-change', {
+    type: 'name',
+    radioType: props.curRadio,
+    groupIndex: props.groupIndex,
+    value: evt,
+  })
+}
 
 const taglist = computed(() => {
   return transToTagList(props.data)
 })
 
-const FixedDialogRef = inject('FixedDialogRef')
+const AddTimeTagDialogRef = inject<Ref<InstanceType<typeof AddTimeTagDialog>>>('AddTimeTagDialogRef')
 function openPeriodDialog() {
   console.log('🚀 ~ openPeriodDialog:', props.curRadio, props.groupIndex)
   const copyData = [...props.sourceData]
-  FixedDialogRef?.value?.open(copyData, {
+  AddTimeTagDialogRef?.value?.open(copyData, {
     isCustom: false,
     groupIndex: props.groupIndex,
     groupPrice: inputPrice.value,
@@ -91,6 +109,9 @@ function changePrice(evt: number | null) {
   nextTick(() => {
     emits('on-change', {
       type: 'price',
+      radioType: props.curRadio,
+      value: evt,
+      groupIndex: props.groupIndex,
       row: newRow,
       data: newData,
     })
@@ -118,6 +139,7 @@ function onDeleteTag(item: any) {
   console.log('🚀 ~ onDelete:', props.groupName, '>>>', item, newData)
   emits('on-change', {
     type: 'deleteTag',
+    groupIndex: props.groupIndex,
     row: newRow,
     data: newData,
   })
@@ -126,14 +148,14 @@ function onDeleteTag(item: any) {
 function deleteThisItem() {
   console.log('🚀 ~ deleteThisItem:', props.data)
   inputPrice.value = null
-  const newRow = props.data?.map(v => ({ ...v, status: 0, group: 0, price: null })) ?? []
+  inputGroupName.value = ''
+  const newRow = (props.data && props.data.length > 0) ? props.data?.map(v => ({ value: v.value, status: 0, group: 0, price: null })) : []
   const newData = mergeArrays(props.sourceData, newRow)
-  nextTick(() => {
-    emits('on-change', {
-      type: 'clearRow',
-      row: newRow,
-      data: newData,
-    })
+  emits('on-change', {
+    type: 'clearRow',
+    groupIndex: props.groupIndex,
+    row: newRow,
+    data: newData,
   })
 }
 </script>
