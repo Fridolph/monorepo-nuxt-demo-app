@@ -6,5 +6,18 @@
   ],
   "devDependencies": {
     "lerna": "^8.2.3"
+  },
+  "dependencies": {
+    "@nuxt/content": "^3.9.0",
+    "@nuxt/fonts": "^0.12.1",
+    "@nuxt/icon": "^2.1.1",
+    "@nuxt/image": "^2.0.0",
+    "@nuxt/scripts": "^0.13.1",
+    "@nuxtjs/i18n": "^10.2.1",
+    "@pinia/nuxt": "^0.11.3",
+    "@vueuse/nuxt": "^14.1.0",
+    "dayjs-nuxt": "^2.1.11",
+    "nuxt-mcp-dev": "^0.3.1",
+    "nuxt-radash": "^1.0.0"
   }
 }
