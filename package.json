@@ -1,23 +1,20 @@
 {
   "name": "root",
   "private": true,
+  "scripts": {
+    "dev:play": "pnpm --filter playground run dev"
+  },
   "workspaces": [
     "packages/*"
   ],
-  "devDependencies": {
-    "lerna": "^8.2.3"
+  "pnpm": {
+    "overrides": {
+      "vue": "npm:vue@3.5.22",
+      "better-sqlite3": "^12.5.0"
+    }
   },
-  "dependencies": {
-    "@nuxt/content": "^3.9.0",
-    "@nuxt/fonts": "^0.12.1",
-    "@nuxt/icon": "^2.1.1",
-    "@nuxt/image": "^2.0.0",
-    "@nuxt/scripts": "^0.13.1",
-    "@nuxtjs/i18n": "^10.2.1",
-    "@pinia/nuxt": "^0.11.3",
-    "@vueuse/nuxt": "^14.1.0",
-    "dayjs-nuxt": "^2.1.11",
-    "nuxt-mcp-dev": "^0.3.1",
-    "nuxt-radash": "^1.0.0"
+  "devDependencies": {
+    "@types/node": "^25.0.3",
+    "lerna": "^8.2.3"
   }
 }
