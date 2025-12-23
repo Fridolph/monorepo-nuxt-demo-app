@@ -5,7 +5,11 @@ export default defineNuxtConfig({
     '@nuxt/ui',
     '@nuxt/scripts',
     '@nuxt/test-utils',
-    '@nuxt/image'
+    '@nuxt/image',
+    '@vueuse/nuxt',
+    '@pinia/nuxt',
+    'dayjs-nuxt',
+    'pinia-plugin-persistedstate/nuxt'
   ],
 
   devtools: {
@@ -13,6 +17,10 @@ export default defineNuxtConfig({
   },
 
   css: ['~/assets/css/main.css'],
+
+  ui: {
+    fonts: false
+  },
 
   routeRules: {
     '/': { prerender: true }
@@ -40,16 +48,6 @@ export default defineNuxtConfig({
         ]
       }
     }
-  },
-
-  // 添加以下自动导入配置
-  autoImports: {
-    vue: true,
-    nuxt: true,
-    imports: [
-      'ref', 'reactive', 'computed', 'watch', 'onMounted',
-      'useNuxtApp', 'useRouter', 'useRoute', 'useState'
-    ]
   },
 
   eslint: {

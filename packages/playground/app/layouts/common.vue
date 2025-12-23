@@ -1,3 +1,7 @@
+<script setup lang="ts">
+// import { ProjectNav } from '~/.nuxt/components';
+</script>
+
 <template>
   <UApp>
     <UHeader>
@@ -8,6 +12,8 @@
 
         <TemplateMenu />
       </template>
+
+      <ProjectNav />
 
       <template #right>
         <UColorModeButton />
