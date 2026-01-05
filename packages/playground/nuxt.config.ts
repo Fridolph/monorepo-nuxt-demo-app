@@ -13,7 +13,23 @@ export default defineNuxtConfig({
   ],
 
   devtools: {
-    enabled: true
+    enabled: true,
+
+    timeline: {
+      enabled: true
+    }
+  },
+
+  app: {
+    head: {
+      // htmlAttrs: { lang: 'en' },
+      // title: 'GreenSketch | Sketching a Greener Future',
+      meta: [
+        { name: 'mobile-web-app-capable', content: 'yes' },
+        { name: 'viewport', content: 'width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no' }
+      ],
+      script: []
+    }
   },
 
   css: ['~/assets/css/main.css'],
@@ -44,7 +60,8 @@ export default defineNuxtConfig({
           '@nuxt/types',
           '@nuxt/ui',
           'nuxt/auto-imports',
-          'nuxt'
+          'nuxt',
+          'pinia'
         ]
       }
     }

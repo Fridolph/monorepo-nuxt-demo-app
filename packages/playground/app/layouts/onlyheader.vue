@@ -9,6 +9,8 @@
         <TemplateMenu />
       </template>
 
+      <HeaderNav />
+
       <template #right>
         <UColorModeButton />
 

@@ -13,7 +13,7 @@
         <TemplateMenu />
       </template>
 
-      <ProjectNav />
+      <HeaderNav />
 
       <template #right>
         <UColorModeButton />

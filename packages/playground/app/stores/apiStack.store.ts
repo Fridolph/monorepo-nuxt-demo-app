@@ -1,5 +1,4 @@
 // stores/apiStacksStore.ts
-import { defineStore } from 'pinia'
 
 export const useApiStacksStore = defineStore('apiStacks', () => {
   const isSyncPage1 = ref<boolean>(false)
