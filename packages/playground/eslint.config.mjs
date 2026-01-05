@@ -18,7 +18,7 @@ export default withNuxt({
       'error',
       {
         singleline: 'never',
-        multiline: 'always',
+        multiline: 'never',
         selfClosingTag: {
           singleline: 'never',
           multiline: 'always'

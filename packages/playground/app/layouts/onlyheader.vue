@@ -25,7 +25,7 @@
       </template>
     </UHeader>
 
-    <UMain>
+    <UMain class="p-4">
       <slot />
     </UMain>
   </UApp>

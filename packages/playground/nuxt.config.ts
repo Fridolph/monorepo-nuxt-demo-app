@@ -8,9 +8,13 @@ export default defineNuxtConfig({
     '@nuxt/image',
     '@vueuse/nuxt',
     '@pinia/nuxt',
-    'dayjs-nuxt',
-    'pinia-plugin-persistedstate/nuxt'
+    'pinia-plugin-persistedstate'
   ],
+
+  imports: {
+    autoImport: true,
+    presets: ['vue'] // 自动导入 Vue 的 ref/onMounted 等 API
+  },
 
   devtools: {
     enabled: true,
@@ -41,13 +45,6 @@ export default defineNuxtConfig({
   routeRules: {
     '/': { prerender: true }
   },
-
-  devServer: {
-    host: '0.0.0.0',
-    port: 5945
-  },
-
-  compatibilityDate: '2025-01-15',
 
   // 确保生成类型声明
   typescript: {
