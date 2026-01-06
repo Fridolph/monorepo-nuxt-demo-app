@@ -46,6 +46,11 @@ export default defineNuxtConfig({
     '/': { prerender: true }
   },
 
+  devServer: {
+    host: '0.0.0.0',
+    port: 5945
+  },
+
   // 确保生成类型声明
   typescript: {
     shim: false,

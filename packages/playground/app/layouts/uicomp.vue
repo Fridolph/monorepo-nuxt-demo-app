@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const props = defineProps<{
+defineProps<{
   layoutClass?: string
 }>()
 const router = useRouter()
@@ -17,6 +17,14 @@ const back = () => {
         </NuxtLink>
 
         <TemplateMenu />
+
+        <UButton
+          variant="outline" size="xs"
+          class="text-xs cursor-pointer absolute left-4 top-5"
+          @click="back">
+          <UIcon name="mdi:arrow-left" class="size-4" />
+          Prev
+        </UButton>
       </template>
 
       <template #right>
@@ -34,15 +42,6 @@ const back = () => {
     </UHeader>
 
     <UMain class="p-4">
-      <div class="mb-4">
-        <UButton
-          color="secondary" class="text-sm cursor-pointer"
-          @click="back">
-          回到上一页
-        </UButton>
-        <Divider />
-      </div>
-
       <section class="flex flex-col gap-4">
         <div class="grid grid-cols-3 gap-6">
           <div class="col-span-2" :class="layoutClass">

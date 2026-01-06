@@ -1,8 +1,8 @@
 <script setup lang="ts">
 const cards = ref([
   { title: 'Nuxt UI', icon: 'material-symbols:component-exchange', route: '/nuxt-ui', description: 'Nuxt UI Component Demo' },
-  { title: 'Simple Demo', icon: 'material-symbols:queue-play-next-outline-sharp', route: '/demo', description: 'Demo examples for different scenarios and subsequent logical derivation' },
-  { title: 'Example', icon: 'ph:projector-screen-chart-fill', route: '/example', description: 'Accompanied by a demo of the business scenario, there will be a process' }
+  { title: 'Simple Demo', icon: 'material-symbols:queue-play-next-outline-sharp', route: '/demo', description: '思考业务场景，开发前的练手、思路及优化' },
+  { title: 'Idea', icon: 'ph:projector-screen-chart-fill', route: '/idea', description: '不负责任的脑洞打开，只开坑不填坑 ~ 慎入' }
 ])
 </script>
 

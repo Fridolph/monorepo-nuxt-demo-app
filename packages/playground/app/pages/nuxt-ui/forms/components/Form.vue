@@ -1,0 +1,85 @@
+<script setup lang="ts">
+import useForms from '../composables/useForms'
+
+const {
+  schema, formData, onSubmit,
+  sexList, hobbyList, colorChip, colorText,
+  inputDateRef
+} = useForms()
+</script>
+
+<template>
+  <ContentTitleWrap title="Form & Zod Validate">
+    <p>
+      用途: <br>
+      使用 Form 组件，使用任何支持标准模式的验证库或您自己的验证逻辑来验证表单数据。
+      它与 FormField 组件配合使用，自动显示表单元素周围的错误消息。<br>
+      模式验证：<br>
+      - state - 保存表单状态的反应对象。<br>
+      - schema - 任何标准模式或超级结构。<br>
+    </p>
+
+    <UForm
+      :schema="schema" :state="formData" class="w-auto space-y-4"
+      @submit="onSubmit">
+      <UFormField required label="Email" name="email">
+        <UInput v-model="formData.email" />
+      </UFormField>
+
+      <UFormField required label="Password" name="password">
+        <UInput v-model="formData.password" type="password" />
+      </UFormField>
+
+      <UFormField required label="Sex" name="sex">
+        <URadioGroup v-model="formData.sex" value-key="id" :items="sexList" />
+      </UFormField>
+
+      <UFormField
+        required label="Hobbies" name="hobbies"
+        orientation="vertical"
+        class="w-60">
+        <UCheckboxGroup v-model="formData.hobbies" :items="hobbyList" orientation="horizontal" />
+      </UFormField>
+
+      <UFormField required label="Color" name="color">
+        <UPopover>
+          <UButton
+            :label="colorText" color="neutral" variant="outline"
+            class="w-100">
+            <template #leading>
+              <span :style="colorChip" class="size-3 rounded-full" />
+            </template>
+          </UButton>
+
+          <template #content>
+            <UColorPicker v-model="formData.color" class="p-2" />
+          </template>
+        </UPopover>
+      </UFormField>
+
+      <!-- <UFormField required label="InputDate" name="inputDate">
+        <UInputDate ref="inputDate" v-model="formData.inputDate" range>
+          <template #trailing>
+            <UPopover :reference="inputDateRef?.inputsRef[0]?.$el">
+              <UButton
+                color="neutral"
+                variant="link"
+                size="sm"
+                icon="i-lucide-calendar"
+                aria-label="Select a date range"
+                class="px-0"
+              />
+              <template #content>
+                <UCalendar v-model="formData.inputDate" class="p-2" :number-of-months="2" range />
+              </template>
+            </UPopover>
+          </template>
+        </UInputDate>
+      </UFormField> -->
+
+      <UButton type="submit">
+        Submit
+      </UButton>
+    </UForm>
+  </ContentTitleWrap>
+</template>

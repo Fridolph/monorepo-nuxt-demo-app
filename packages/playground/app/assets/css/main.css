@@ -18,3 +18,43 @@
 .use-trans {
   @apply transition-all duration-300 ease-in-out;
 }
+
+/* 标题基础样式：统一提取公共属性 */
+h1, h2, h3, h4, h5, h6 {
+  @apply font-semibold;
+}
+
+/* has-line 公共样式：提取所有重复属性 */
+[has-line] {
+  --line-height: 18px; /* 默认高度 */
+  @apply relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: -10px;
+    top: 15%;
+    width: 3px;
+    height: var(--line-height);
+    background-color: var(--color-green-500);
+  }
+}
+
+/* 标题层级样式：仅定义差异化属性（字体大小 + 动态高度变量） */
+h1 {
+  @apply text-2xl;
+  &[has-line] { --line-height: 24px; }
+}
+h2 {
+  @apply text-lg;
+  /* 高度与默认值18px一致，可省略 */
+  &[has-line] { --line-height: 18px; }
+}
+h3, h4 {
+  @apply text-base;
+  &[has-line] { --line-height: 16px; }
+}
+h5, h6 {
+  @apply text-sm;
+  &[has-line] { --line-height: 14px; }
+}

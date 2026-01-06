@@ -363,7 +363,3 @@ const code = ref(`{
     </section>
   </section>
 </template>
-
-<style scoped>
-
-</style>
