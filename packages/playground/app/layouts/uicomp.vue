@@ -27,6 +27,8 @@ const back = () => {
         </UButton>
       </template>
 
+      <HeaderNav />
+
       <template #right>
         <UColorModeButton />
 

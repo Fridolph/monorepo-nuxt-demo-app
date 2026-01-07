@@ -3,7 +3,7 @@ import useForms from '../composables/useForms'
 
 const {
   schema, formData, onSubmit,
-  sexList, hobbyList, colorChip, colorText,
+  sexList, hobbyList, colorChip, colorText, mottoItems,
   inputDateRef
 } = useForms()
 </script>
@@ -22,12 +22,29 @@ const {
     <UForm
       :schema="schema" :state="formData" class="w-auto space-y-4"
       @submit="onSubmit">
-      <UFormField required label="Email" name="email">
-        <UInput v-model="formData.email" />
+      <UFormField
+        required label="Email" name="email">
+        <UInput v-model="formData.email" class="w-50" />
       </UFormField>
 
-      <UFormField required label="Password" name="password">
-        <UInput v-model="formData.password" type="password" />
+      <UFormField
+        required label="Password" name="password">
+        <UInput v-model="formData.password" type="password" class="w-50" />
+      </UFormField>
+
+      <UFormField label="Age" name="age">
+        <UInputNumber
+          v-model="formData.age" :min="1" :max="999"
+          class="w-50"
+          :increment="{
+            color: 'neutral',
+            size: 'xs'
+          }"
+          :decrement="{
+            color: 'neutral',
+            size: 'xs'
+          }"
+        />
       </UFormField>
 
       <UFormField required label="Sex" name="sex">
@@ -57,8 +74,34 @@ const {
         </UPopover>
       </UFormField>
 
-      <!-- <UFormField required label="InputDate" name="inputDate">
-        <UInputDate ref="inputDate" v-model="formData.inputDate" range>
+      <UFormField label="Motto" name="motto">
+        <USelectMenu v-model="formData.motto" :items="mottoItems" class="w-100" />
+      </UFormField>
+
+      <UFormField name="isReady">
+        <USwitch
+          v-model="formData.isReady"
+          color="neutral" default-value label="When you Go"
+          description="Are you ready?"
+        />
+      </UFormField>
+
+      <UFormField
+        name="intro" label="Intro"
+        class="w-100">
+        <UTextarea
+          v-model="formData.intro"
+          :maxrows="8" autoresize
+          maxlength="300" class="w-100 relative"
+          color="neutral" variant="subtle" placeholder="Introduce yourself ..."
+        />
+        <p class="text-right text-xs mt-1">
+          {{ `${formData.intro?.length || 0}/300` }}
+        </p>
+      </UFormField>
+
+      <UFormField label="Input Date" name="inputDate">
+        <UInputDate ref="inputDateRef" v-model="formData.inputDate" range>
           <template #trailing>
             <UPopover :reference="inputDateRef?.inputsRef[0]?.$el">
               <UButton
@@ -69,13 +112,18 @@ const {
                 aria-label="Select a date range"
                 class="px-0"
               />
+
               <template #content>
-                <UCalendar v-model="formData.inputDate" class="p-2" :number-of-months="2" range />
+                <!-- TODO 完善该组件及交互 -->
+                <UCalendar
+                  v-model="formData.inputDate" class="p-2" :number-of-months="2"
+                  range :is-date-unavailable="isDateUnavailable"
+                />
               </template>
             </UPopover>
           </template>
         </UInputDate>
-      </UFormField> -->
+      </UFormField>
 
       <UButton type="submit">
         Submit

@@ -6,38 +6,34 @@ const logStore = useInteractionLogStore()
 function closeAlert() {
   isShowAlert.value = false
   logStore.addLog(
-    'alert',
-    '关闭告警弹窗',
-    '组件：UAlert | 类型：outline | 颜色：neutral'
+    'element',
+    '点击 Alert Close Icon',
+    '关闭告警弹窗'
   )
 }
 
 // 显示 alert 按钮日志
-const handleShowAlert = () => {
+const handleShowAlert = async () => {
   isShowAlert.value = true
   logStore.addLog(
-    'alert',
-    '点击显示告警按钮',
-    '组件：UButton | 颜色：neutral'
+    'element',
+    `点击 show alert 按钮`,
+    '打开告警弹窗'
   )
 }
 
 // 告警 Actions 日志
 const handleAction1 = () => {
-  console.log('Action 1')
   logStore.addLog(
-    'alert',
-    '点击告警操作：Action 1',
-    '组件：UAlert.Action'
+    'element',
+    '点击 Action 1'
   )
 }
 
 const handleAction2 = () => {
-  console.log('Action 2')
   logStore.addLog(
-    'alert',
-    '点击告警操作：Action 2',
-    '组件：UAlert.Action | 类型：subtle'
+    'element',
+    '点击 Action 2'
   )
 }
 </script>
