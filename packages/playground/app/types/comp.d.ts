@@ -21,4 +21,5 @@ interface CardItem {
   desc: string
   imgUrl?: string
   to?: string
+  showLabel?: boolean
 }
