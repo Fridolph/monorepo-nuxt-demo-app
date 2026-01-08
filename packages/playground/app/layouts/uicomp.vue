@@ -1,7 +1,10 @@
 <script setup lang="ts">
-defineProps<{
+withDefaults(defineProps<{
   layoutClass?: string
-}>()
+  useLog?: boolean
+}>(), {
+  useLog: false
+})
 const router = useRouter()
 const back = () => {
   router.back()
@@ -45,11 +48,11 @@ const back = () => {
 
     <UMain class="p-4">
       <section class="flex flex-col gap-4">
-        <div class="grid grid-cols-3 gap-6">
-          <div class="col-span-2" :class="layoutClass">
+        <div class="gap-6" :class="useLog ? 'grid grid-cols-3' : 'flex flex-col'">
+          <div :class="[layoutClass, useLog ? 'col-span-2' : '']">
             <slot />
           </div>
-          <InteractionLog class="self-start" />
+          <InteractionLog v-if="useLog" class="self-start" />
         </div>
       </section>
     </UMain>

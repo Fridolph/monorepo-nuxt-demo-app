@@ -6,6 +6,7 @@ export default defineNuxtConfig({
     '@nuxt/scripts',
     '@nuxt/test-utils',
     '@nuxt/image',
+    '@nuxtjs/mdc',
     '@vueuse/nuxt',
     '@pinia/nuxt',
     'pinia-plugin-persistedstate'
