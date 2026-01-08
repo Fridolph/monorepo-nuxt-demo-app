@@ -13,7 +13,13 @@ export default defineNuxtConfig({
 
   imports: {
     autoImport: true,
-    presets: ['vue'] // 自动导入 Vue 的 ref/onMounted 等 API
+    presets: [
+      'vue',
+      {
+        from: 'pinia-plugin-persistedstate',
+        imports: ['definePersistedState']
+      }
+    ] // 自动导入 Vue 的 ref/onMounted 等 API
   },
 
   devtools: {
@@ -40,6 +46,17 @@ export default defineNuxtConfig({
 
   ui: {
     fonts: false
+  },
+
+  // 配置持久化存储
+  appConfig: {
+    piniaPersistedstate: {
+      storage: 'localStorage', // 默认存储方式
+      cookieOptions: {
+        sameSite: 'strict',
+        maxAge: 90 * 24 * 60 * 60 // 三月
+      }
+    }
   },
 
   routeRules: {

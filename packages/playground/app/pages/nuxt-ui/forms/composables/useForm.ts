@@ -1,9 +1,10 @@
 import * as z from 'zod'
-import type { FormSubmitEvent, RadioGroupItem } from '@nuxt/ui'
+import type { RadioGroupItem, FormErrorEvent, FormSubmitEvent } from '@nuxt/ui'
 import { CalendarDate } from '@internationalized/date'
 import type { DateValue } from '@internationalized/date'
+import { withInteractionLog } from '~/composables/global/useInteractionLog'
 
-export default function useForms() {
+export default function useForm() {
   const schema = z.object({
     email: z.email('Invalid email'),
     password: z.string('Password is required').min(8, 'Must be at least 8 characters'),
@@ -63,10 +64,19 @@ export default function useForms() {
   ])
 
   const toast = useToast()
-  async function onSubmit(event: FormSubmitEvent<ZodSchema>) {
+  const onSubmit = withInteractionLog((event: FormSubmitEvent<ZodSchema>) => {
     toast.add({ title: 'Success', description: 'The form has been submitted.', color: 'success' })
     console.log('onSubmit', event.data)
-  }
+  }, {
+    title: () => `提交表单 -> success`
+  })
+
+  const onSubmitError = withInteractionLog((event: FormErrorEvent) => {
+    console.log('🚀 ~ onSubmitError:', event)
+  }, {
+    title: () => `提交表单 -> failed`,
+    description: ''
+  })
 
   return {
     // ref
@@ -75,7 +85,7 @@ export default function useForms() {
     // computed
     sexList, hobbyList, colorChip, colorText, mottoItems,
     // fns
-    onSubmit, isDateDisabled,
+    onSubmit, onSubmitError, isDateDisabled,
     // refs
     inputDateRef
   }
