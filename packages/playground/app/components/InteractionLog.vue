@@ -4,7 +4,8 @@ import type { LogItem } from '~/stores/interactionLog.store'
 const logStore = useInteractionLogStore()
 const { deleteCateLogItem, deleteThisCateLogs } = logStore
 const { logs } = storeToRefs(logStore)
-const category = computed(() => getUrlLastPath(window.location.href))
+const route = useRoute()
+const category = computed(() => getUrlLastPath(route.path))
 
 // 类型断言：确保TS识别logs包含id属性
 const items = computed(() => logs.value?.[category.value as CategoryName] as LogItem[])

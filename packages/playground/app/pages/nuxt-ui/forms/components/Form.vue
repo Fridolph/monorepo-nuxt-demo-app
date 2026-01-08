@@ -2,8 +2,9 @@
 import useForms from '../composables/useForms'
 
 const {
-  schema, formData, onSubmit,
+  schema, formData,
   sexList, hobbyList, colorChip, colorText, mottoItems,
+  onSubmit, isDateDisabled,
   inputDateRef
 } = useForms()
 </script>
@@ -117,7 +118,7 @@ const {
                 <!-- TODO 完善该组件及交互 -->
                 <UCalendar
                   v-model="formData.inputDate" class="p-2" :number-of-months="2"
-                  range :is-date-unavailable="isDateUnavailable"
+                  range :is-date-disabled="isDateDisabled"
                 />
               </template>
             </UPopover>

@@ -1,41 +1,37 @@
 <script setup lang="ts">
+import { withInteractionLog } from '~/composables/global/useInteractionLog'
+
 const isShowAlert = ref(true)
-const logStore = useInteractionLogStore()
+
+const toggleAlert = withInteractionLog(() => {
+  console.log('toggleAlert')
+  isShowAlert.value = !isShowAlert.value
+}, {
+  title: () => `点击 ${isShowAlert.value ? 'open' : 'close'} alert 按钮`
+})
 
 // 关闭 alert 日志
-function closeAlert() {
+const closeAlert = withInteractionLog(() => {
   isShowAlert.value = false
-  logStore.addLog(
-    'element',
-    '点击 Alert Close Icon',
-    '关闭告警弹窗'
-  )
-}
-
-// 显示 alert 按钮日志
-const handleShowAlert = async () => {
-  isShowAlert.value = true
-  logStore.addLog(
-    'element',
-    `点击 show alert 按钮`,
-    '打开告警弹窗'
-  )
-}
+}, {
+  title: () => `click Close Icon`,
+  description: () => `点击 Alert 组件 的 Close Icon 按钮`
+})
 
 // 告警 Actions 日志
-const handleAction1 = () => {
-  logStore.addLog(
-    'element',
-    '点击 Action 1'
-  )
-}
+const handleAction1 = withInteractionLog(() => {
+  console.log('handleAction1')
+}, {
+  title: () => `click Action 1`,
+  description: () => `点击 Alert 组件 的 Action 1 按钮`
+})
 
-const handleAction2 = () => {
-  logStore.addLog(
-    'element',
-    '点击 Action 2'
-  )
-}
+const handleAction2 = withInteractionLog(() => {
+  console.log('handleAction2')
+}, {
+  title: () => `click Action 2`,
+  description: () => `点击 Alert 组件 的 Action 2 按钮`
+})
 </script>
 
 <template>
@@ -43,8 +39,8 @@ const handleAction2 = () => {
     <UButton
       color="neutral"
       :ui="{ base: 'w-auto max-w-full cursor-pointer' }"
-      @click="handleShowAlert">
-      show alert
+      @click="toggleAlert">
+      {{ isShowAlert ? 'close' : 'show' }} alert
     </UButton>
   </div>
 

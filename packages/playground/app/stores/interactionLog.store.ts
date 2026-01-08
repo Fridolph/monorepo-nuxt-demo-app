@@ -44,7 +44,7 @@ export const useInteractionLogStore = defineStore(KEY_INTERACTION_LOG, () => {
     const newLog: TimelineItem = {
       id: nanoid(8), // 生成8位唯一ID
       category,
-      date: nDate.toDateString() + ' ' + nDate.toLocaleTimeString(),
+      date: nDate.toLocaleDateString() + ' ' + nDate.toLocaleTimeString(),
       title,
       description,
       icon: icon || 'i-lucide-mouse-pointer' // 默认鼠标点击图标
@@ -66,6 +66,10 @@ export const useInteractionLogStore = defineStore(KEY_INTERACTION_LOG, () => {
     if (targetIndex !== -1) logs.value[type].splice(targetIndex, 1)
   }
 
+  /**
+   * 清空指定类型的所有日志
+   * @param type 记录类型，组件名称
+   */
   const deleteThisCateLogs = (type: CategoryName) => {
     logs.value[type] = []
   }

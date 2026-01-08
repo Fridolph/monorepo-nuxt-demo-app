@@ -1,6 +1,7 @@
 import * as z from 'zod'
 import type { FormSubmitEvent, RadioGroupItem } from '@nuxt/ui'
 import { CalendarDate } from '@internationalized/date'
+import type { DateValue } from '@internationalized/date'
 
 export default function useForms() {
   const schema = z.object({
@@ -33,9 +34,9 @@ export default function useForms() {
     })
   })
 
-  // TODO 完善该组件及交互
-  const isDateUnavailable = (date: DateValue) => {
-    return date.day >= 10 && date.day <= 16
+  const isDateDisabled = (date: DateValue) => {
+    const thisYear = new Date().getFullYear()
+    return date.year < (thisYear - 1) || date.year > (thisYear + 1)
   }
 
   const mottoItems = computed(() => [
@@ -74,7 +75,7 @@ export default function useForms() {
     // computed
     sexList, hobbyList, colorChip, colorText, mottoItems,
     // fns
-    onSubmit,
+    onSubmit, isDateDisabled,
     // refs
     inputDateRef
   }
