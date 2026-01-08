@@ -60,7 +60,6 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
-    '/': { prerender: true }
   },
 
   devServer: {
