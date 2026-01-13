@@ -32,43 +32,81 @@ const handleAction2 = withInteractionLog(() => {
   title: () => `click Action 2`,
   description: () => `点击 Alert 组件 的 Action 2 按钮`
 })
+
+// 生成代码示例
+const alertCode = computed(() => {
+  return `<UAlert
+  title="UAlert -> 可配置"
+  description="You can change the primary color in your app config."
+  color="neutral"
+  variant="outline"
+  :close="{
+    color: 'primary',
+    class: 'rounded-full cursor-pointer',
+    onClick: closeAlert
+  }"
+  :actions="[
+    { label: 'Action 1', class: 'cursor-pointer', onClick: handleAction1 },
+    {
+      label: 'Action 2',
+      color: 'neutral',
+      class: 'cursor-pointer',
+      variant: 'subtle',
+      onClick: handleAction2
+    }
+  ]"
+/>`
+})
 </script>
 
 <template>
-  <div>
-    <UButton
-      color="neutral"
-      :ui="{ base: 'w-auto max-w-full cursor-pointer' }"
-      @click="toggleAlert">
-      {{ isShowAlert ? 'close' : 'show' }} alert
-    </UButton>
-  </div>
-
-  <div class="grid grid-cols-2 gap-6">
-    <USkeleton v-if="!isShowAlert" class="self-start h-50" />
-    <div v-else class="align-self-start">
-      <UAlert
-        title="UAlert -> 可配置"
-        description="You can change the primary color in your app config."
-        color="neutral"
-        variant="outline"
-        :close="{
-          color: 'primary',
-          class: 'rounded-full cursor-pointer',
-          onClick: closeAlert
-        }"
-        :actions="[
-          { label: 'Action 1', class: 'cursor-pointer', onClick: handleAction1 },
-          {
-            label: 'Action 2',
-            color: 'neutral',
-            class: 'cursor-pointer',
-            variant: 'subtle',
-            onClick: handleAction2
-          }
-        ]"
-      />
+  <div class="space-y-6">
+    <div>
+      <h3 class="text-lg font-medium mb-4">UAlert 警告组件</h3>
+      <p class="text-gray-500 dark:text-gray-400 mb-4">
+        警告组件用于向用户显示重要信息，可以包含标题、描述、操作按钮和关闭按钮。
+      </p>
     </div>
-    <!-- 全局日志组件 -->
+
+    <div>
+      <UButton
+        color="neutral"
+        :ui="{ base: 'w-auto max-w-full cursor-pointer' }"
+        @click="toggleAlert">
+        {{ isShowAlert ? 'close' : 'show' }} alert
+      </UButton>
+    </div>
+
+    <div class="grid grid-cols-1 gap-6">
+      <USkeleton v-if="!isShowAlert" class="self-start h-50" />
+      <ComponentDemo 
+        v-else
+        title="可配置的警告组件"
+        description="这个警告组件具有自定义的颜色、变体、关闭按钮和操作按钮。"
+        :code="alertCode"
+      >
+        <UAlert
+          title="UAlert -> 可配置"
+          description="You can change the primary color in your app config."
+          color="neutral"
+          variant="outline"
+          :close="{
+            color: 'primary',
+            class: 'rounded-full cursor-pointer',
+            onClick: closeAlert
+          }"
+          :actions="[
+            { label: 'Action 1', class: 'cursor-pointer', onClick: handleAction1 },
+            {
+              label: 'Action 2',
+              color: 'neutral',
+              class: 'cursor-pointer',
+              variant: 'subtle',
+              onClick: handleAction2
+            }
+          ]"
+        />
+      </ComponentDemo>
+    </div>
   </div>
 </template>
