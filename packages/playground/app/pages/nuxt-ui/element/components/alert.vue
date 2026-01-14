@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ShowCoder from '~/components/Content/ShowCoder.vue'
 import { withInteractionLog } from '~/composables/global/useInteractionLog'
 
 const isShowAlert = ref(true)
@@ -62,7 +63,9 @@ const alertCode = computed(() => {
 <template>
   <div class="space-y-6">
     <div>
-      <h3 class="text-lg font-medium mb-4">UAlert 警告组件</h3>
+      <h3 class="text-lg font-medium mb-4">
+        UAlert 警告组件
+      </h3>
       <p class="text-gray-500 dark:text-gray-400 mb-4">
         警告组件用于向用户显示重要信息，可以包含标题、描述、操作按钮和关闭按钮。
       </p>
@@ -79,12 +82,12 @@ const alertCode = computed(() => {
 
     <div class="grid grid-cols-1 gap-6">
       <USkeleton v-if="!isShowAlert" class="self-start h-50" />
-      <ComponentDemo 
+
+      <ShowCoder
         v-else
         title="可配置的警告组件"
         description="这个警告组件具有自定义的颜色、变体、关闭按钮和操作按钮。"
-        :code="alertCode"
-      >
+        :code="alertCode">
         <UAlert
           title="UAlert -> 可配置"
           description="You can change the primary color in your app config."
@@ -106,7 +109,7 @@ const alertCode = computed(() => {
             }
           ]"
         />
-      </ComponentDemo>
+      </ShowCoder>
     </div>
   </div>
 </template>
