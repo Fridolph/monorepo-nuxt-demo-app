@@ -1,34 +1,120 @@
 <script setup lang="ts">
-// import { mainList, secList, thirdList, decList, subtractList } from './mockData'
+import type { TableColumn, DropdownMenuItem } from '@nuxt/ui'
 
-const initialData = ref([
+// import { mainList, secList, thirdList, decList, subtractList } from './mockData'
+interface User {
+  id: number
+  name: string
+  position: string
+  email: string
+  role: string
+}
+
+const toast = useToast()
+const { copy } = useClipboard()
+
+const tableData = ref([
   {
     id: 1,
-    name: '商品一',
-    price: 100,
-    inStock: true,
-    tags: ['热门', '新品']
+    name: 'Lindsay Walton',
+    position: 'Front-end Developer',
+    email: 'lindsay.walton@example.com',
+    role: 'Member'
   },
   {
     id: 2,
-    name: '商品二',
-    price: 200,
-    inStock: false,
-    tags: ['热门', '促销']
+    name: 'Courtney Henry',
+    position: 'Designer',
+    email: 'courtney.henry@example.com',
+    role: 'Admin'
   },
   {
     id: 3,
-    name: '商品三',
-    price: 150,
-    inStock: true,
-    tags: ['新品']
+    name: 'Tom Cook',
+    position: 'Director of Product',
+    email: 'tom.cook@example.com',
+    role: 'Member'
+  },
+  {
+    id: 4,
+    name: 'Whitney Francis',
+    position: 'Copywriter',
+    email: 'whitney.francis@example.com',
+    role: 'Admin'
+  },
+  {
+    id: 5,
+    name: 'Leonard Krasner',
+    position: 'Senior Designer',
+    email: 'leonard.krasner@example.com',
+    role: 'Owner'
+  },
+  {
+    id: 6,
+    name: 'Floyd Miles',
+    position: 'Principal Designer',
+    email: 'floyd.miles@example.com',
+    role: 'Member'
   }
 ])
+
+const columns: TableColumn<User>[] = [
+  {
+    accessorKey: 'id',
+    header: 'ID'
+  },
+  {
+    accessorKey: 'name',
+    header: 'Name'
+  },
+  {
+    accessorKey: 'email',
+    header: 'Email'
+  },
+  {
+    accessorKey: 'role',
+    header: 'Role'
+  },
+  {
+    id: 'action'
+  }
+]
 
 // 错误状态
 const hasError = ref(false)
 const handleError = (error: Error | null) => {
   hasError.value = !!error
+}
+
+function getDropdownActions(user: User): DropdownMenuItem[][] {
+  return [
+    [
+      {
+        label: 'Copy user Id',
+        icon: 'i-lucide-copy',
+        onSelect: () => {
+          copy(user.id.toString())
+
+          toast.add({
+            title: 'User ID copied to clipboard!',
+            color: 'success',
+            icon: 'i-lucide-circle-check'
+          })
+        }
+      }
+    ],
+    [
+      {
+        label: 'Edit',
+        icon: 'i-lucide-edit'
+      },
+      {
+        label: 'Delete',
+        icon: 'i-lucide-trash',
+        color: 'error'
+      }
+    ]
+  ]
 }
 </script>
 
@@ -42,11 +128,11 @@ const handleError = (error: Error | null) => {
       <!-- 编辑器区域 -->
       <div>
         <h2 class="text-xl font-semibold mb-4">
-          编辑JSON数据
+          编辑 data 数据 （JSON）
         </h2>
         <JsonEditor
-          v-model="initialData"
-          title="商品数据"
+          v-model="tableData"
+          title="商品列表 数据"
           description="编辑商品列表数据，格式必须是有效的JSON数组"
           height="400px"
           @error="handleError"
@@ -58,45 +144,42 @@ const handleError = (error: Error | null) => {
         <h2 class="text-xl font-semibold mb-4">
           数据预览
         </h2>
-        <UCard>
-          <template #header>
-            <div class="flex items-center justify-between">
-              <h3 class="text-lg font-medium">
-                商品列表
-              </h3>
-              <UBadge v-if="hasError" color="red">
-                数据格式错误
-              </UBadge>
-            </div>
-          </template>
 
-          <div v-if="!hasError">
-            <UTable :columns="tableColumns" :rows="initialData">
-              <template #inStock-data="{ row }">
-                <UBadge :color="row.inStock ? 'green' : 'red'">
-                  {{ row.inStock ? '有货' : '缺货' }}
-                </UBadge>
-              </template>
+        <div class="flex flex-col items-center justify-between">
+          <UBadge v-if="hasError" color="error">
+            数据格式错误
+          </UBadge>
 
-              <template #tags-data="{ row }">
-                <div class="flex gap-1">
-                  <UBadge
-                    v-for="tag in row.tags" :key="tag" color="blue"
-                    variant="subtle">
-                    {{ tag }}
-                  </UBadge>
+          <UTable :data="tableData" :columns="columns" class="flex-1">
+            <template #name-cell="{ row }">
+              <div class="flex items-center gap-3">
+                <UAvatar
+                  :src="`https://i.pravatar.cc/120?img=${row.original.id}`"
+                  size="lg"
+                  :alt="`${row.original.name} avatar`"
+                />
+                <div>
+                  <p class="font-medium text-highlighted">
+                    {{ row.original.name }}
+                  </p>
+                  <p>
+                    {{ row.original.position }}
+                  </p>
                 </div>
-              </template>
-            </UTable>
-          </div>
-
-          <div v-else class="p-4 text-center text-red-500">
-            <UIcon name="i-lucide-alert-triangle" class="text-2xl" />
-            <p class="mt-2">
-              请修复JSON格式错误后查看数据
-            </p>
-          </div>
-        </UCard>
+              </div>
+            </template>
+            <template #action-cell="{ row }">
+              <UDropdownMenu :items="getDropdownActions(row.original)">
+                <UButton
+                  icon="i-lucide-ellipsis-vertical"
+                  color="neutral"
+                  variant="ghost"
+                  aria-label="Actions"
+                />
+              </UDropdownMenu>
+            </template>
+          </UTable>
+        </div>
       </div>
     </div>
   </nuxtlayout>
