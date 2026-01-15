@@ -53,7 +53,6 @@ const mdItems = [
   }
 ]
 
-const scriptEnd = '<' + '/' + 'script' + '>'
 const alertCode = computed(() => (`<template>
   <UAccordion
     type="multiple"
@@ -105,7 +104,7 @@ const mdItems = [
     content: 'Yes! Nuxt UI is used in production by thousands of applications with extensive tests, regular updates, and active maintenance.'
   }
 ]
-${scriptEnd}
+${SCRIPT_END}
 `))
 </script>
 
@@ -114,7 +113,7 @@ ${scriptEnd}
     <h3>基础用法</h3>
     <UAccordion :items="items" />
 
-    <ContentCodeShower
+    <ContentCodeViewer
       title="UAccordion"
       description="高级用法，可添加 markdown content，更多查看文档"
       :code="alertCode"
@@ -132,6 +131,6 @@ ${scriptEnd}
           <MDC :value="item.content" unwrap="p" />
         </template>
       </UAccordion>
-    </ContentCodeShower>
+    </ContentCodeViewer>
   </section>
 </template>

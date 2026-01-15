@@ -215,7 +215,7 @@ const buttonWithBadgeCode = computed(() => {
     </div>
 
     <!-- 基础徽章 -->
-    <ContentCodeShower
+    <ContentCodeViewer
       title="基础徽章"
       description="最简单的徽章用法，可以根据需要设置不同的颜色、变体和尺寸。"
       :code="badgeCode"
@@ -231,10 +231,10 @@ const buttonWithBadgeCode = computed(() => {
           徽章
         </UBadge>
       </div>
-    </ContentCodeShower>
+    </ContentCodeViewer>
 
     <!-- 带图标的徽章 -->
-    <ContentCodeShower
+    <ContentCodeViewer
       title="带图标的徽章"
       description="徽章可以包含图标，增强视觉效果和信息传达。"
       :code="badgeWithIconCode"
@@ -261,10 +261,10 @@ const buttonWithBadgeCode = computed(() => {
           已完成
         </UBadge>
       </div>
-    </ContentCodeShower>
+    </ContentCodeViewer>
 
     <!-- 通知徽章 -->
-    <ContentCodeShower
+    <ContentCodeViewer
       title="通知徽章"
       description="徽章常用于显示通知计数，可以放置在图标或按钮的角落。"
       :code="notificationBadgeCode"
@@ -286,10 +286,10 @@ const buttonWithBadgeCode = computed(() => {
         </div>
         <UButton icon="i-lucide-plus" size="sm" @click="increaseNotifications" />
       </div>
-    </ContentCodeShower>
+    </ContentCodeViewer>
 
     <!-- 徽章在按钮中的应用 -->
-    <ContentCodeShower
+    <ContentCodeViewer
       title="徽章在按钮中的应用"
       description="徽章可以与按钮组合使用，显示相关的计数或状态信息。"
       :code="buttonWithBadgeCode"
@@ -312,6 +312,6 @@ const buttonWithBadgeCode = computed(() => {
           </UBadge>
         </UButton>
       </div>
-    </ContentCodeShower>
+    </ContentCodeViewer>
   </div>
 </template>

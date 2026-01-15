@@ -3,7 +3,7 @@ const demoItems = ref<CardItem[]>([
   {
     title: 'Quote 实时报价',
     desc: '多表单交互场景，支持用户对已添加项进行添加、修改、排序，删除，最终',
-    to: '/demo/quote',
+    to: '/demo/quote-calc',
     showLabel: true
   },
   {

@@ -1,61 +1,51 @@
 <script setup lang="ts">
 import { withInteractionLog } from '~/composables/useInteractionLog'
 import { useCodeHighlighter } from '~/composables/content/useCodeHighlighter'
-// 使用 shiki 的正确导入方式
-import { createHighlighter } from 'shiki'
+import { ref, computed } from 'vue'
 
-const props = defineProps({
+export interface CodeShowerProps {
   /**
    * 组件标题
    */
-  title: {
-    type: String,
-    default: ''
-  },
+  title?: string
   /**
    * 组件描述
    */
-  description: {
-    type: String,
-    default: ''
-  },
+  description?: string
   /**
    * 代码示例
    */
-  code: {
-    type: String,
-    required: true
-  },
+  code: string
   /**
    * 代码语言
    */
-  language: {
-    type: String,
-    default: 'html'
-  },
+  language?: string
   /**
    * 是否默认展开代码
    */
-  defaultOpen: {
-    type: Boolean,
-    default: false
-  },
+  defaultOpen?: boolean
   /**
    * 预览区域的自定义类名
    */
-  previewClass: {
-    type: String,
-    default: ''
-  }
+  previewClass?: string
+}
+
+const props = withDefaults(defineProps<CodeShowerProps>(), {
+  title: '',
+  description: '',
+  language: 'html',
+  defaultOpen: false,
+  previewClass: ''
 })
+
+// 检查是否有代码内容
+const hasCode = computed(() => Boolean(props.code?.trim()))
 
 // 获取颜色模式
 const colorMode = useColorMode()
 
 // 根据颜色模式选择主题
 const currentTheme = computed(() => {
-  // 亮色模式使用 github-light (清晰易读的亮色主题)
-  // 暗色模式使用 github-dark (比 monokai 更现代、对比度更好的暗色主题)
   return colorMode.value === 'light' ? 'github-light' : 'github-dark'
 })
 
@@ -83,6 +73,7 @@ const copyCode = async () => {
       color: 'warning',
       duration: 2000
     })
+    return
   }
   const isSucc = await onCopy(props.code)
   if (isSucc) {
@@ -96,50 +87,16 @@ const copyCode = async () => {
   }
 }
 
-// 使用 shiki 高亮代码
-const highlightedCode = ref('')
-const isHighlighterLoaded = ref(false)
-let highlighter: any = null
+// 为 useCodeHighlighter 创建响应式引用
+const codeRef = computed(() => props.code)
+const languageRef = computed(() => props.language)
 
-// 初始化 shiki 并高亮代码
-onMounted(async () => {
-  try {
-    // 同时加载亮色和暗色主题，以便切换
-    highlighter = await createHighlighter({
-      themes: ['github-light', 'github-dark'],
-      langs: [props.language]
-    })
-
-    updateHighlightedCode()
-    isHighlighterLoaded.value = true
-  } catch (error) {
-    console.error('Shiki 初始化失败:', error)
-  }
-})
-
-// 更新高亮代码的方法
-const updateHighlightedCode = () => {
-  if (highlighter) {
-    highlightedCode.value = highlighter.codeToHtml(props.code, {
-      lang: props.language,
-      theme: currentTheme.value
-    })
-  }
-}
-
-// 监听代码和语言变化，重新高亮
-watch([() => props.code, () => props.language], () => {
-  if (isHighlighterLoaded.value) {
-    updateHighlightedCode()
-  }
-})
-
-// 监听主题变化，重新高亮
-watch(() => currentTheme.value, () => {
-  if (isHighlighterLoaded.value) {
-    updateHighlightedCode()
-  }
-})
+// 使用 useCodeHighlighter hook 处理代码高亮
+const { highlightedCode, isHighlighterLoaded } = useCodeHighlighter(
+  codeRef,
+  languageRef,
+  currentTheme
+)
 </script>
 
 <template>
@@ -161,8 +118,8 @@ watch(() => currentTheme.value, () => {
       <slot />
     </div>
 
-    <!-- 代码区域 -->
-    <div class="code-wrapper">
+    <!-- 代码区域 - 仅当有代码内容时显示 -->
+    <div v-if="hasCode" class="code-wrapper">
       <!-- 代码标题栏 -->
       <div
         class="code-header flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-800 cursor-pointer"
@@ -194,7 +151,7 @@ watch(() => currentTheme.value, () => {
           <UIcon name="i-lucide-loader" class="animate-spin mr-2" />
           代码高亮加载中...
         </div>
-        <div else class="shiki-wrapper bg-gray-50 p-2" v-html="highlightedCode" />
+        <div v-else class="shiki-wrapper bg-gray-50 p-2 text-sm" v-html="highlightedCode" />
       </div>
     </div>
   </div>
@@ -211,11 +168,9 @@ watch(() => currentTheme.value, () => {
     margin: 0 !important;
     border-radius: 0 !important;
     border: none !important;
-    font-size: 0.825rem;
   }
   code {
     width: 100%;
-    font-size: 14px;
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   }
 }

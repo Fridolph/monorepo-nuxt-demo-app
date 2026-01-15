@@ -145,7 +145,7 @@ const loadingButtonCode = computed(() => {
     </div>
 
     <!-- 基础按钮 -->
-    <ContentCodeShower
+    <ContentCodeViewer
       title="基础按钮"
       description="最基本的按钮用法，可以根据需要设置不同的颜色、变体和尺寸。"
       :code="buttonCode"
@@ -160,10 +160,10 @@ const loadingButtonCode = computed(() => {
           按钮
         </UButton>
       </div>
-    </ContentCodeShower>
+    </ContentCodeViewer>
 
     <!-- 带图标的按钮 -->
-    <ContentCodeShower
+    <ContentCodeViewer
       title="带图标的按钮"
       description="按钮可以包含图标，增强视觉效果和信息传达。"
       :code="buttonWithIconCode"
@@ -179,10 +179,10 @@ const loadingButtonCode = computed(() => {
           喜欢
         </UButton>
       </div>
-    </ContentCodeShower>
+    </ContentCodeViewer>
 
     <!-- 加载中的按钮 -->
-    <ContentCodeShower
+    <ContentCodeViewer
       title="加载中的按钮"
       description="按钮可以显示加载状态，防止用户重复点击。"
       :code="loadingButtonCode"
@@ -199,6 +199,6 @@ const loadingButtonCode = computed(() => {
           加载中
         </UButton>
       </div>
-    </ContentCodeShower>
+    </ContentCodeViewer>
   </div>
 </template>

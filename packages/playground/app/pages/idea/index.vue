@@ -7,7 +7,7 @@ const demoItems = ref<CardItem[]>([
 ])
 
 const routeTo = (to?: string) => {
-  if (to) return navigateTo('/demo/quote')
+  if (to) return navigateTo('/demo/quote-calc')
 }
 </script>
 
