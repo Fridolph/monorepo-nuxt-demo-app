@@ -9,8 +9,34 @@ export default defineNuxtConfig({
     '@nuxtjs/mdc',
     '@vueuse/nuxt',
     '@pinia/nuxt',
-    'pinia-plugin-persistedstate'
+    'pinia-plugin-persistedstate',
+    '@nuxt/content' // 添加 @nuxt/content 模块
   ],
+
+  // 配置 @nuxt/content
+  content: {
+    highlight: {
+      // 使用默认的 Shiki 高亮器
+      theme: {
+        // 默认主题
+        default: 'github-dark',
+        // 暗色模式主题
+        dark: 'github-dark',
+        // 亮色模式主题
+        light: 'github-light'
+      },
+      preload: [
+        'html',
+        'css',
+        'javascript',
+        'typescript',
+        'json',
+        'vue',
+        'bash',
+        'markdown'
+      ]
+    }
+  },
 
   imports: {
     autoImport: true,

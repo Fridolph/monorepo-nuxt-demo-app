@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import ShowCoder from '~/components/Content/ShowCoder.vue';
-
 const buttonVariants = ['solid', 'outline', 'soft', 'ghost', 'link'] as const
-const selectedVariant = ref('solid')
+const selectedVariant = ref<typeof buttonVariants[number]>('solid')
 
 const buttonCode = computed(() => {
   return `<UButton
@@ -39,8 +37,7 @@ const buttonCode = computed(() => {
         </div>
       </div>
 
-      <!-- 使用 ShowCoder 组件 -->
-      <ShowCoder
+      <ContentCodeShower
         title="基础按钮"
         description="基础按钮组件，可以设置不同的变体样式。"
         :code="buttonCode">
@@ -51,23 +48,7 @@ const buttonCode = computed(() => {
             按钮
           </UButton>
         </div>
-      </ShowCoder>
-
-      <!-- 另一个示例 -->
-      <!-- <ShowCoder
-        title="带图标的按钮"
-        description="按钮可以包含图标，增强视觉效果。"
-        code="sdkfjsdkfjsdlfk"
-        :default-open="true">
-        <div class="flex gap-4">
-          <UButton
-            color="primary"
-            :variant="selectedVariant"
-            icon="i-lucide-heart">
-            喜欢
-          </UButton>
-        </div>
-      </ShowCoder> -->
+      </ContentCodeShower>
     </div>
   </NuxtLayout>
 </template>

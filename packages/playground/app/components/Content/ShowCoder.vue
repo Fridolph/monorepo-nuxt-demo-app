@@ -93,7 +93,7 @@ const showCopiedToast = () => {
 </script>
 
 <template>
-  <div class="show-coder mb-8 border-1 border-gray-200 rounded overflow-hidden">
+  <div class="show-coder w-full mb-8 border-1 border-gray-200 rounded overflow-hidden">
     <header v-if="title || description" class="mb-3 p-4">
       <h3 v-if="title" class="text-lg font-medium mb-1">
         {{ title }}
@@ -136,20 +136,16 @@ const showCopiedToast = () => {
   </div>
 </template>
 
-<style scoped lang="postcss">
+<style scoped>
 .show-coder {
-  @apply w-full;
+  width: 100%;
 }
 
-.preview-area {
-  @apply min-h-[100px];
+:deep(.code-collapsible .collapse-content) {
+  padding: 0;
 }
 
-.code-collapsible :deep(.collapse-content) {
-  @apply p-0;
-}
-
-.code-collapsible :deep(.collapse-content-inner) {
-  @apply p-0;
+:deep(.code-collapsible .collapse-content-inner) {
+  padding: 0;
 }
 </style>

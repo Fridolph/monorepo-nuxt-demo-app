@@ -19,11 +19,11 @@ const back = () => {
           <AppLogo class="w-auto h-6 shrink-0" />
         </NuxtLink>
 
-        <TemplateMenu />
+        <!-- <TemplateMenu /> -->
 
         <UButton
           variant="outline" size="xs"
-          class="text-xs cursor-pointer absolute left-4 top-5"
+          class="text-xs cursor-pointer translate-y-0.5 ml-1"
           @click="back">
           <UIcon name="mdi:arrow-left" class="size-4" />
           Prev
