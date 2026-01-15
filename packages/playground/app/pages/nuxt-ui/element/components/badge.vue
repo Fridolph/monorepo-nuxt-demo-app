@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { withInteractionLog } from '~/composables/global/useInteractionLog'
+import { withInteractionLog } from '~/composables/useInteractionLog'
 
 // 徽章类型
 const badgeTypes = ['default', 'primary', 'secondary', 'success', 'warning', 'danger', 'info'] as const

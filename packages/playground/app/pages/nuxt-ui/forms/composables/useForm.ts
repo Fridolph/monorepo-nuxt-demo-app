@@ -2,7 +2,7 @@ import * as z from 'zod'
 import type { RadioGroupItem, FormErrorEvent, FormSubmitEvent } from '@nuxt/ui'
 import { CalendarDate } from '@internationalized/date'
 import type { DateValue } from '@internationalized/date'
-import { withInteractionLog } from '~/composables/global/useInteractionLog'
+import { withInteractionLog } from '~/composables/useInteractionLog'
 
 export default function useForm() {
   const schema = z.object({

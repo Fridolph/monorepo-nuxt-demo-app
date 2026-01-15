@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { withInteractionLog } from '~/composables/global/useInteractionLog'
+import { withInteractionLog } from '~/composables/useInteractionLog'
 
 // 按钮变体
 const buttonVariants = ['solid', 'outline', 'soft', 'ghost', 'link'] as const

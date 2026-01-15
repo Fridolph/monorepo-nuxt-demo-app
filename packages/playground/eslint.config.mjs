@@ -32,6 +32,7 @@ export default withNuxt({
     // 不允许向模板中添加多个根节点（Vue3 不用遵守）
     'vue/no-multiple-template-root': ['off', {
       disallowComments: false
-    }]
+    }],
+    'vue/no-v-html': ['off']
   }
 })

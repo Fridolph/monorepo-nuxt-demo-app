@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { withInteractionLog } from '~/composables/global/useInteractionLog'
+import { withInteractionLog } from '~/composables/useInteractionLog'
+import { useCodeHighlighter } from '~/composables/content/useCodeHighlighter'
 // 使用 shiki 的正确导入方式
 import { createHighlighter } from 'shiki'
 
@@ -71,29 +72,28 @@ const toggleCode = withInteractionLog(() => {
 })
 
 // 复制代码到剪贴板
-const copyCode = withInteractionLog(async () => {
-  try {
-    await navigator.clipboard.writeText(props.code)
-    showCopiedToast()
-  } catch (err) {
-    console.error('复制失败:', err)
-  }
-}, {
-  title: '复制代码',
-  description: '将代码示例复制到剪贴板',
-  icon: 'i-lucide-copy'
-})
-
-// 显示复制成功的提示
 const toast = useToast()
-const showCopiedToast = () => {
-  toast.add({
-    title: '复制成功',
-    description: '代码已复制到剪贴板',
-    icon: 'i-lucide-check',
-    color: 'success',
-    duration: 2000
-  })
+const { onCopy, isSupported } = useCopyToClipboard()
+const copyCode = async () => {
+  if (!isSupported.value) {
+    toast.add({
+      title: '复制失败',
+      description: '当前环境不支持复制功能',
+      icon: 'i-lucide-alert-triangle',
+      color: 'warning',
+      duration: 2000
+    })
+  }
+  const isSucc = await onCopy(props.code)
+  if (isSucc) {
+    toast.add({
+      title: '复制成功',
+      description: '代码已复制到剪贴板',
+      icon: 'i-lucide-check',
+      color: 'success',
+      duration: 2000
+    })
+  }
 }
 
 // 使用 shiki 高亮代码
@@ -143,19 +143,22 @@ watch(() => currentTheme.value, () => {
 </script>
 
 <template>
-  <div class="content-code-demo w-full my-6 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+  <div class="content-code-demo w-full flex flex-col gap-2 dark:border-gray-700">
     <!-- 标题和描述 -->
-    <div v-if="title || description" class="bg-gray-50 dark:bg-gray-800 p-4 border-b border-gray-200 dark:border-gray-700">
-      <h3 v-if="title" class="text-lg font-medium">{{ title }}</h3>
-      <p v-if="description" class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ description }}</p>
+    <div v-if="title || description" class=" ">
+      <h3 v-if="title" class="text-lg font-medium">
+        {{ title }}
+      </h3>
+      <p v-if="description" class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+        {{ description }}
+      </p>
     </div>
 
     <!-- 预览区域 -->
     <div
-      class="demo-wrapper min-h-[100px] bg-white dark:bg-gray-900 p-6"
-      :class="previewClass"
-    >
-      <slot></slot>
+      class="demo-wrapper min-h-[100px] bg-white dark:bg-gray-900"
+      :class="previewClass">
+      <slot />
     </div>
 
     <!-- 代码区域 -->
@@ -163,8 +166,7 @@ watch(() => currentTheme.value, () => {
       <!-- 代码标题栏 -->
       <div
         class="code-header flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-800 cursor-pointer"
-        @click="toggleCode"
-      >
+        @click="toggleCode">
         <div class="flex items-center gap-2">
           <UIcon name="i-lucide-code" class="text-gray-500" />
           <span class="text-sm font-medium">{{ language.toUpperCase() }}</span>
@@ -176,8 +178,8 @@ watch(() => currentTheme.value, () => {
             variant="ghost"
             icon="i-lucide-copy"
             size="xs"
-            @click.stop="copyCode"
             aria-label="复制代码"
+            @click.stop="copyCode"
           />
           <UIcon
             :name="isOpen ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'"
@@ -187,12 +189,12 @@ watch(() => currentTheme.value, () => {
       </div>
 
       <!-- 代码内容 - 使用 Shiki 替换原来的 ContentRenderer -->
-      <div v-show="isOpen" class="code-content">
-        <div v-if="isHighlighterLoaded" v-html="highlightedCode" class="shiki-wrapper p-2"></div>
-        <div v-else class="p-4 text-center text-gray-500">
+      <div v-show="isOpen" class="code-content bg-gray-100">
+        <div v-if="!isHighlighterLoaded" class="p-4 text-center text-gray-500">
           <UIcon name="i-lucide-loader" class="animate-spin mr-2" />
           代码高亮加载中...
         </div>
+        <div else class="shiki-wrapper bg-gray-50 p-2" v-html="highlightedCode" />
       </div>
     </div>
   </div>
