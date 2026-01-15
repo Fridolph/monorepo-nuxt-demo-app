@@ -35,28 +35,30 @@ const handleAction2 = withInteractionLog(() => {
 
 // 生成代码示例
 const alertCode = computed(() => {
-  return `<UAlert
-  title="UAlert -> 可配置"
-  description="You can change the primary color in your app config."
-  color="neutral"
-  variant="outline"
-  :close="{
-    color: 'primary',
-    class: 'rounded-full cursor-pointer',
-    onClick: closeAlert
-  }"
-  :actions="[
-    { label: 'Action 1', class: 'cursor-pointer', onClick: handleAction1 },
-    {
-      label: 'Action 2',
-      color: 'neutral',
-      class: 'cursor-pointer',
-      variant: 'subtle',
-      onClick: handleAction2
-    }
-  ]"
-/>`
-})
+  return `<template>
+  <UAlert
+    title="UAlert -> 可配置"
+    description="You can change the primary color in your app config."
+    color="neutral"
+    variant="outline"
+    :close="{
+      color: 'primary',
+      class: 'rounded-full cursor-pointer',
+      onClick: closeAlert
+    }"
+    :actions="[
+      { label: 'Action 1', class: 'cursor-pointer', onClick: handleAction1 },
+      {
+        label: 'Action 2',
+        color: 'neutral',
+        class: 'cursor-pointer',
+        variant: 'subtle',
+        onClick: handleAction2
+      }
+    ]"
+  />
+</template>
+`})
 </script>
 
 <template>
@@ -84,7 +86,7 @@ const alertCode = computed(() => {
         title="可配置的警告组件"
         description="这个警告组件具有自定义的颜色、变体、关闭按钮和操作按钮。"
         :code="alertCode"
-        language="ts"
+        language="vue"
       >
         <UAlert
           title="UAlert -> 可配置"

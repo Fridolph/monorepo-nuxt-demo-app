@@ -10,33 +10,8 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@pinia/nuxt',
     'pinia-plugin-persistedstate',
-    '@nuxt/content' // 添加 @nuxt/content 模块
+    '@nuxt/content'
   ],
-
-  // 配置 @nuxt/content
-  content: {
-    highlight: {
-      // 使用默认的 Shiki 高亮器
-      theme: {
-        // 默认主题
-        default: 'github-dark',
-        // 暗色模式主题
-        dark: 'github-dark',
-        // 亮色模式主题
-        light: 'github-light'
-      },
-      preload: [
-        'html',
-        'css',
-        'javascript',
-        'typescript',
-        'json',
-        'vue',
-        'bash',
-        'markdown'
-      ]
-    }
-  },
 
   imports: {
     autoImport: true,
@@ -47,6 +22,11 @@ export default defineNuxtConfig({
         imports: ['definePersistedState']
       }
     ] // 自动导入 Vue 的 ref/onMounted 等 API
+  },
+
+  // 添加 Shiki 到 transpile 列表，确保它能被正确处理
+  build: {
+    transpile: ['shiki']
   },
 
   devtools: {

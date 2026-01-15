@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { withInteractionLog } from '~/composables/global/useInteractionLog'
+// 使用 shiki 的正确导入方式
+import { createHighlighter } from 'shiki'
 
 const props = defineProps({
   /**
@@ -46,6 +48,16 @@ const props = defineProps({
   }
 })
 
+// 获取颜色模式
+const colorMode = useColorMode()
+
+// 根据颜色模式选择主题
+const currentTheme = computed(() => {
+  // 亮色模式使用 github-light (清晰易读的亮色主题)
+  // 暗色模式使用 github-dark (比 monokai 更现代、对比度更好的暗色主题)
+  return colorMode.value === 'light' ? 'github-light' : 'github-dark'
+})
+
 // 控制代码示例是否可见
 const isOpen = ref(props.defaultOpen)
 
@@ -84,33 +96,48 @@ const showCopiedToast = () => {
   })
 }
 
-// 构建用于 ContentRendererMarkdown 的 markdown 对象
-const markdownContent = computed(() => {
-  return {
-    body: {
-      type: 'root',
-      children: [
-        {
-          type: 'element',
-          tag: 'pre',
-          props: {
-            class: `language-${props.language}`
-          },
-          children: [
-            {
-              type: 'element',
-              tag: 'code',
-              props: {
-                class: `language-${props.language}`
-              },
-              children: [
-                { type: 'text', value: props.code }
-              ]
-            }
-          ]
-        }
-      ]
-    }
+// 使用 shiki 高亮代码
+const highlightedCode = ref('')
+const isHighlighterLoaded = ref(false)
+let highlighter: any = null
+
+// 初始化 shiki 并高亮代码
+onMounted(async () => {
+  try {
+    // 同时加载亮色和暗色主题，以便切换
+    highlighter = await createHighlighter({
+      themes: ['github-light', 'github-dark'],
+      langs: [props.language]
+    })
+
+    updateHighlightedCode()
+    isHighlighterLoaded.value = true
+  } catch (error) {
+    console.error('Shiki 初始化失败:', error)
+  }
+})
+
+// 更新高亮代码的方法
+const updateHighlightedCode = () => {
+  if (highlighter) {
+    highlightedCode.value = highlighter.codeToHtml(props.code, {
+      lang: props.language,
+      theme: currentTheme.value
+    })
+  }
+}
+
+// 监听代码和语言变化，重新高亮
+watch([() => props.code, () => props.language], () => {
+  if (isHighlighterLoaded.value) {
+    updateHighlightedCode()
+  }
+})
+
+// 监听主题变化，重新高亮
+watch(() => currentTheme.value, () => {
+  if (isHighlighterLoaded.value) {
+    updateHighlightedCode()
   }
 })
 </script>
@@ -159,28 +186,39 @@ const markdownContent = computed(() => {
         </div>
       </div>
 
-      <!-- 代码内容 -->
+      <!-- 代码内容 - 使用 Shiki 替换原来的 ContentRenderer -->
       <div v-show="isOpen" class="code-content">
-        <ContentRenderer :value="markdownContent">
-          <ContentRendererMarkdown :value="markdownContent" />
-        </ContentRenderer>
+        <div v-if="isHighlighterLoaded" v-html="highlightedCode" class="shiki-wrapper p-2"></div>
+        <div v-else class="p-4 text-center text-gray-500">
+          <UIcon name="i-lucide-loader" class="animate-spin mr-2" />
+          代码高亮加载中...
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-/* 覆盖 ContentRendererMarkdown 的默认样式 */
-::deep(.code-content) {
-  /* pre {
-    margin: 0;
-    border-radius: 0;
-    border: none;
-  } */
-  code {
+/* Shiki 样式调整 */
+::deep(.shiki-wrapper) {
+  padding: 0;
+  margin: 0;
+
+  /* 调整 shiki 生成的代码样式 */
+  pre {
+    margin: 0 !important;
+    border-radius: 0 !important;
+    border: none !important;
     font-size: 0.825rem;
+  }
+  code {
     width: 100%;
+    font-size: 14px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   }
 }
-</style>
 
+:deep(.shiki) {
+  background-color: transparent !important;
+}
+</style>
