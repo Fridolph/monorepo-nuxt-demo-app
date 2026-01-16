@@ -66,7 +66,7 @@ const initJsonText = () => {
 initJsonText()
 
 // 监听传入数据变化
-watch(() => props.modelValue, (newVal) => {
+watch(() => props.modelValue, () => {
   if (!isEditing.value) {
     initJsonText()
   }

@@ -1,84 +1,5 @@
 <script setup lang="ts">
-import type { TableColumn, DropdownMenuItem } from '@nuxt/ui'
-
-// import { mainList, secList, thirdList, decList, subtractList } from './mockData'
-interface User {
-  id: number
-  name: string
-  position: string
-  email: string
-  role: string
-}
-
-const toast = useToast()
-const { copy } = useClipboard()
-
-const tableData = ref([
-  {
-    id: 1,
-    name: 'Lindsay Walton',
-    position: 'Front-end Developer',
-    email: 'lindsay.walton@example.com',
-    role: 'Member'
-  },
-  {
-    id: 2,
-    name: 'Courtney Henry',
-    position: 'Designer',
-    email: 'courtney.henry@example.com',
-    role: 'Admin'
-  },
-  {
-    id: 3,
-    name: 'Tom Cook',
-    position: 'Director of Product',
-    email: 'tom.cook@example.com',
-    role: 'Member'
-  },
-  {
-    id: 4,
-    name: 'Whitney Francis',
-    position: 'Copywriter',
-    email: 'whitney.francis@example.com',
-    role: 'Admin'
-  },
-  {
-    id: 5,
-    name: 'Leonard Krasner',
-    position: 'Senior Designer',
-    email: 'leonard.krasner@example.com',
-    role: 'Owner'
-  },
-  {
-    id: 6,
-    name: 'Floyd Miles',
-    position: 'Principal Designer',
-    email: 'floyd.miles@example.com',
-    role: 'Member'
-  }
-])
-
-const columns: TableColumn<User>[] = [
-  {
-    accessorKey: 'id',
-    header: 'ID'
-  },
-  {
-    accessorKey: 'name',
-    header: 'Name'
-  },
-  {
-    accessorKey: 'email',
-    header: 'Email'
-  },
-  {
-    accessorKey: 'role',
-    header: 'Role'
-  },
-  {
-    id: 'action'
-  }
-]
+import { mainList, secList, thirdList, decList, subtractList } from './mockData'
 
 // 错误状态
 const hasError = ref(false)
@@ -86,101 +7,87 @@ const handleError = (error: Error | null) => {
   hasError.value = !!error
 }
 
-function getDropdownActions(user: User): DropdownMenuItem[][] {
-  return [
-    [
-      {
-        label: 'Copy user Id',
-        icon: 'i-lucide-copy',
-        onSelect: () => {
-          copy(user.id.toString())
-
-          toast.add({
-            title: 'User ID copied to clipboard!',
-            color: 'success',
-            icon: 'i-lucide-circle-check'
-          })
-        }
-      }
-    ],
-    [
-      {
-        label: 'Edit',
-        icon: 'i-lucide-edit'
-      },
-      {
-        label: 'Delete',
-        icon: 'i-lucide-trash',
-        color: 'error'
-      }
-    ]
-  ]
-}
+const requiredCalculationParams = ref({
+  taxRate: 0.1
+})
+const computedData = computed(() => {
+  return {
+    finalPrice: ''
+  }
+})
 </script>
 
 <template>
   <NuxtLayout name="uicomp" layout-class="flex flex-col gap-4">
     <h1 class="text-2xl font-bold mb-6">
-      JSON编辑器示例
+      模拟实时数据  快速计算 & 展示 业务
     </h1>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="grid grid-cols-2 lg:grid-cols-2 gap-6">
       <!-- 编辑器区域 -->
-      <div>
-        <h2 class="text-xl font-semibold mb-4">
-          编辑 data 数据 （JSON）
+      <section class="flex flex-col gap-y-8 gap-x-4">
+        <h2 class="text-xl font-semibold">
+          这里为方便实用了 mock 数据，模拟多表单交互的场景（表单的交互放另一个Demo里）
         </h2>
+
         <JsonEditor
-          v-model="tableData"
-          title="商品列表 数据"
-          description="编辑商品列表数据，格式必须是有效的JSON数组"
-          height="400px"
+          v-model="mainList"
+          title="1. 主商品 mainList 数据"
+          description="编辑 主商品列表数据，格式必须是有效的JSON数组"
+          height="300px"
           @error="handleError"
         />
-      </div>
+        <JsonEditor
+          v-model="secList"
+          title="2. 次级商品 secList 数据"
+          height="300px"
+          @error="handleError"
+        />
+        <JsonEditor
+          v-model="thirdList"
+          title="3. 三级商品 thirdList 数据"
+          height="300px"
+          @error="handleError"
+        />
+        <JsonEditor
+          v-model="decList"
+          title="4. 补贴、优惠项 decList"
+          description="用来和上述相减的"
+          height="200px"
+          @error="handleError"
+        />
+        <JsonEditor
+          v-model="subtractList"
+          title="5. 其他项 subtractList"
+          description="该项可灵活定制，可加可减，方便一些特殊灵活需要"
+          height="200px"
+          @error="handleError"
+        />
+        <JsonEditor
+          v-model="requiredCalculationParams"
+          title="计算所需的必要参数"
+          description="如税率，一些限制项，计算规则等等；这里不展开根据需要自行填写"
+          height="200px"
+          @error="handleError"
+        />
+      </section>
 
       <!-- 预览区域 -->
-      <div>
-        <h2 class="text-xl font-semibold mb-4">
-          数据预览
-        </h2>
-
-        <div class="flex flex-col items-center justify-between">
-          <UBadge v-if="hasError" color="error">
-            数据格式错误
-          </UBadge>
-
-          <UTable :data="tableData" :columns="columns" class="flex-1">
-            <template #name-cell="{ row }">
-              <div class="flex items-center gap-3">
-                <UAvatar
-                  :src="`https://i.pravatar.cc/120?img=${row.original.id}`"
-                  size="lg"
-                  :alt="`${row.original.name} avatar`"
-                />
-                <div>
-                  <p class="font-medium text-highlighted">
-                    {{ row.original.name }}
-                  </p>
-                  <p>
-                    {{ row.original.position }}
-                  </p>
-                </div>
-              </div>
-            </template>
-            <template #action-cell="{ row }">
-              <UDropdownMenu :items="getDropdownActions(row.original)">
-                <UButton
-                  icon="i-lucide-ellipsis-vertical"
-                  color="neutral"
-                  variant="ghost"
-                  aria-label="Actions"
-                />
-              </UDropdownMenu>
-            </template>
-          </UTable>
+      <section class="flex flex-col gap-2">
+        <JsonEditor
+          v-model="computedData"
+          readonly
+          title="根据左边商品项动态计算出的 Computed"
+          description="该项可灵活定制，可加可减，方便一些特殊灵活需要"
+          height="200px"
+          @error="handleError"
+        />
+        <USeparator />
+        <div class="">
+          展示组件
+          <USkeleton class="h-50 w-60" />
         </div>
-      </div>
+      </section>
     </div>
   </nuxtlayout>
 </template>

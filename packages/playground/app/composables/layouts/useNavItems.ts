@@ -11,6 +11,7 @@ export interface NavChildItem {
   to: string
   disabled?: boolean
   badge?: string | number
+  isNew?: boolean
 }
 
 export interface NavParentItem {
@@ -21,6 +22,7 @@ export interface NavParentItem {
   children?: NavChildItem[]
   disabled?: boolean
   badge?: string | number
+  isNew?: boolean
 }
 
 export type NavItem = NavParentItem
@@ -28,7 +30,7 @@ export type NavItem = NavParentItem
 /**
  * UI组件子菜单项配置
  */
-const UI_COMPONENT_CHILDREN: NavChildItem[] = [
+export const UI_COMPONENT_CHILDREN: NavChildItem[] = [
   {
     label: 'Element',
     icon: 'i-lucide-box',
@@ -45,43 +47,50 @@ const UI_COMPONENT_CHILDREN: NavChildItem[] = [
     label: 'Data',
     icon: 'i-lucide-table-2',
     description: '数据展示组件',
-    to: '/nuxt-ui/data'
+    to: '/nuxt-ui/data',
+    isNew: true
   },
   {
     label: 'Navigation',
     icon: 'i-lucide-navigation',
     description: '导航组件',
-    to: '/nuxt-ui/navigation'
+    to: '/nuxt-ui/navigation',
+    disabled: true
   },
   {
     label: 'Overlay',
     icon: 'i-lucide-square-pen',
     description: '弹窗/覆盖层组件',
-    to: '/nuxt-ui/overlay'
+    to: '/nuxt-ui/overlay',
+    disabled: true
   },
   {
     label: 'Page',
     icon: 'i-lucide-file',
     description: '页面布局组件',
-    to: '/nuxt-ui/page'
+    to: '/nuxt-ui/page',
+    disabled: true
   },
   {
     label: 'Dashboard',
     icon: 'mdi:monitor-dashboard',
     description: '仪表盘组件',
-    to: '/nuxt-ui/dashboard'
+    to: '/nuxt-ui/dashboard',
+    disabled: true
   },
   {
     label: 'AI Chat',
     icon: 'i-lucide-message-square',
     description: 'AI聊天/消息组件',
-    to: '/nuxt-ui/ai-chat'
+    to: '/nuxt-ui/ai-chat',
+    disabled: true
   },
   {
     label: 'Editor',
     icon: 'i-lucide-pencil-line',
     description: '富文本编辑器',
-    to: '/nuxt-ui/editor'
+    to: '/nuxt-ui/editor',
+    disabled: true
   },
   {
     label: 'Content',
@@ -93,13 +102,15 @@ const UI_COMPONENT_CHILDREN: NavChildItem[] = [
     label: 'Color Mode',
     icon: 'i-lucide-palette',
     description: '颜色系统',
-    to: '/nuxt-ui/color'
+    to: '/nuxt-ui/color',
+    disabled: true
   },
   {
     label: 'i18n',
     icon: 'mdi:sort-alphabetical-ascending-variant',
     description: '国际化组件',
-    to: '/nuxt-ui/i18n'
+    to: '/nuxt-ui/i18n',
+    disabled: true
   }
 ]
 
@@ -114,7 +125,8 @@ export default function useNavItems() {
       label: 'UI Component',
       icon: 'i-lucide-layers',
       description: 'Nuxt UI Component',
-      children: UI_COMPONENT_CHILDREN
+      to: '/nuxt-ui'
+      // children: UI_COMPONENT_CHILDREN
     },
     {
       label: 'Demo',

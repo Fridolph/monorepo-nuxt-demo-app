@@ -117,7 +117,7 @@ export const decList = [
     switch: 1,
     isHideItem: 0,
     isHidePrice: 0,
-    gstType: 'gst_free',
+    gstType: 'free',
     linePrice: 4516.2,
     type: 'stc',
     labelKey: 'stc_panel',
@@ -130,7 +130,7 @@ export const decList = [
     switch: 1,
     isHideItem: 0,
     isHidePrice: 0,
-    gstType: 'gst_free',
+    gstType: 'free',
     linePrice: 1728,
     type: 'stcBattery',
     labelKey: 'stc_battery',
@@ -142,20 +142,18 @@ export const decList = [
 
 export const subtractList = [
   {
-    itemName: 'rset 1',
-    gstType: 'gst_free',
+    itemName: '双11平台优惠',
+    gstType: 'free',
     unitPrice: 333,
     linePrice: 333,
-    taxName: null,
     isHidePrice: null,
     isHideItem: null
   },
   {
-    itemName: 'rkrkfj efl',
-    gstType: 'gst_free',
+    itemName: '满减大力度折扣',
+    gstType: 'free',
     unitPrice: 444,
     linePrice: 444,
-    taxName: null,
     isHidePrice: null,
     isHideItem: null
   }

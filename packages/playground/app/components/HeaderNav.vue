@@ -5,5 +5,8 @@ const { items } = useNavItems()
 </script>
 
 <template>
-  <UNavigationMenu :items="items" />
+  <UNavigationMenu
+    arrow :items="items"
+    content-orientation="vertical"
+  />
 </template>
