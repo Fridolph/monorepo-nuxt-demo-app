@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import QuotationDisplay from '~/components/content/QuotationDisplay.vue'
 import { mainList, secList, thirdList, decList, subtractList } from './mockData'
 
 // 错误状态
@@ -82,11 +83,15 @@ const computedData = computed(() => {
           height="200px"
           @error="handleError"
         />
-        <USeparator />
-        <div class="">
-          展示组件
-          <USkeleton class="h-50 w-60" />
-        </div>
+        <USeparator class="my-4" />
+        <QuotationDisplay
+          :main-list="mainList"
+          :sec-list="secList"
+          :third-list="thirdList"
+          :dec-list="decList"
+          :subtract-list="subtractList"
+          :gst-rate="10"
+        />
       </section>
     </div>
   </nuxtlayout>
