@@ -1,9 +1,11 @@
 <script setup lang="ts">
-const cards = ref([
-  { title: 'Nuxt UI', icon: 'material-symbols:component-exchange', route: '/nuxt-ui', description: 'Nuxt UI Component Demo' },
-  { title: 'Simple Demo', icon: 'material-symbols:queue-play-next-outline-sharp', route: '/demo', description: '思考业务场景，开发前的练手、思路及优化' },
-  { title: 'Idea', icon: 'ph:projector-screen-chart-fill', route: '/idea', description: '不负责任的脑洞打开，只开坑不填坑 ~ 慎入' }
-])
+const { t } = useI18n()
+
+const cards = computed(() => ([
+  { title: t('nav.nuxt_comp'), icon: 'material-symbols:component-exchange', route: '/nuxt-ui', description: t('nav.nuxt_comp_desc') },
+  { title: t('nav.demo'), icon: 'material-symbols:queue-play-next-outline-sharp', route: '/demo', description: t('nav.demo_desc') },
+  { title: t('nav.idea'), icon: 'ph:projector-screen-chart-fill', route: '/idea', description: t('nav.idea_desc') }
+]))
 </script>
 
 <template>

@@ -4,7 +4,7 @@
  */
 
 // 定义导航项类型
-export interface NavChildItem {
+export interface NavItem {
   label: string
   icon: string
   description: string
@@ -12,142 +12,64 @@ export interface NavChildItem {
   disabled?: boolean
   badge?: string | number
   isNew?: boolean
+  children?: NavItem[]
 }
 
-export interface NavParentItem {
+// 获取BaseItem类型，用于基础导航项
+type BaseItem = {
   label: string
   icon: string
   description: string
-  to?: string
-  children?: NavChildItem[]
+  to: string
   disabled?: boolean
   badge?: string | number
   isNew?: boolean
+  children?: BaseItem[]
 }
-
-export type NavItem = NavParentItem
-
-/**
- * UI组件子菜单项配置
- */
-export const UI_COMPONENT_CHILDREN: NavChildItem[] = [
-  {
-    label: 'Element',
-    icon: 'i-lucide-box',
-    description: '基础UI元素',
-    to: '/nuxt-ui/element'
-  },
-  {
-    label: 'Forms',
-    icon: 'i-lucide-file-text',
-    description: '表单组件',
-    to: '/nuxt-ui/forms'
-  },
-  {
-    label: 'Data',
-    icon: 'i-lucide-table-2',
-    description: '数据展示组件',
-    to: '/nuxt-ui/data',
-    isNew: true
-  },
-  {
-    label: 'Navigation',
-    icon: 'i-lucide-navigation',
-    description: '导航组件',
-    to: '/nuxt-ui/navigation',
-    disabled: true
-  },
-  {
-    label: 'Overlay',
-    icon: 'i-lucide-square-pen',
-    description: '弹窗/覆盖层组件',
-    to: '/nuxt-ui/overlay',
-    disabled: true
-  },
-  {
-    label: 'Page',
-    icon: 'i-lucide-file',
-    description: '页面布局组件',
-    to: '/nuxt-ui/page',
-    disabled: true
-  },
-  {
-    label: 'Dashboard',
-    icon: 'mdi:monitor-dashboard',
-    description: '仪表盘组件',
-    to: '/nuxt-ui/dashboard',
-    disabled: true
-  },
-  {
-    label: 'AI Chat',
-    icon: 'i-lucide-message-square',
-    description: 'AI聊天/消息组件',
-    to: '/nuxt-ui/ai-chat',
-    disabled: true
-  },
-  {
-    label: 'Editor',
-    icon: 'i-lucide-pencil-line',
-    description: '富文本编辑器',
-    to: '/nuxt-ui/editor',
-    disabled: true
-  },
-  {
-    label: 'Content',
-    icon: 'i-lucide-book-open',
-    description: '内容展示组件',
-    to: '/nuxt-ui/contents'
-  },
-  {
-    label: 'Color Mode',
-    icon: 'i-lucide-palette',
-    description: '颜色系统',
-    to: '/nuxt-ui/color',
-    disabled: true
-  },
-  {
-    label: 'i18n',
-    icon: 'mdi:sort-alphabetical-ascending-variant',
-    description: '国际化组件',
-    to: '/nuxt-ui/i18n',
-    disabled: true
-  }
-]
 
 /**
  * 导航菜单项组合式函数
  * @returns 导航菜单项数据
  */
 export default function useNavItems() {
-  // 使用 shallowRef 提高性能，因为菜单项是复杂对象且不需要深层响应性
-  const items = shallowRef<NavItem[]>([
+  const { t } = useI18n()
+
+  // 基础导航项数据源
+  const baseItems = ref([
     {
-      label: 'UI Component',
+      label: 'nav.nuxt_comp',
       icon: 'i-lucide-layers',
-      description: 'Nuxt UI Component',
+      description: 'nav.nuxt_comp_desc',
       to: '/nuxt-ui'
       // children: UI_COMPONENT_CHILDREN
     },
     {
-      label: 'Demo',
+      label: 'nav.demo',
       icon: 'i-lucide-layers',
-      description: '组合式 Demo',
+      description: 'nav.demo_desc',
       to: '/demo'
     },
     {
-      label: 'Idea',
+      label: 'nav.idea',
       icon: 'mdi:head-lightbulb-outline',
-      description: '不负责的脑洞，慎入',
+      description: 'nav.idea_desc',
       to: '/idea'
     }
   ])
+
+  // 将基础数据源转换为计算属性，实现国际化
+  const items = computed<NavItem[]>(() => baseItems.value.map(item => ({
+    ...item,
+    label: t(item.label),
+    description: t(item.description)
+  })))
 
   /**
    * 获取特定路径的导航项
    * @param path 路径
    * @returns 匹配的导航项或undefined
    */
-  const getNavItemByPath = (path: string): NavItem | NavChildItem | undefined => {
+  const getNavItemByPath = (path: string): NavItem | undefined => {
     // 检查顶级导航项
     const topLevelItem = items.value.find(item => item.to === path)
     if (topLevelItem) return topLevelItem
@@ -165,39 +87,64 @@ export default function useNavItems() {
 
   /**
    * 动态添加新的导航项
-   * @param newItem 新的导航项
-   * @param index 可选的插入位置索引
    */
+  const dynamicNavItems = ref<NavItem[]>([])
+
   const addNavItem = (newItem: NavItem, index?: number): void => {
-    const newItems = [...items.value]
-
-    if (index !== undefined && index >= 0 && index <= newItems.length) {
-      newItems.splice(index, 0, newItem)
+    if (index !== undefined && index >= 0 && index <= dynamicNavItems.value.length) {
+      dynamicNavItems.value.splice(index, 0, newItem)
     } else {
-      newItems.push(newItem)
+      dynamicNavItems.value.push(newItem)
     }
-
-    items.value = newItems
   }
 
   /**
-   * 更新现有导航项
-   * @param label 要更新的导航项标签
-   * @param updates 更新的属性
+   * 更新导航项
+   * @param label 要更新的导航项的标签
+   * @param updates 要应用的更新
+   * @param isBaseItem 是否更新基础导航项（true）或动态导航项（false）
    */
-  const updateNavItem = (label: string, updates: Partial<NavItem>): void => {
-    const newItems = items.value.map((item) => {
-      if (item.label === label) {
-        return { ...item, ...updates }
-      }
-      return item
-    })
+  const updateNavItem = (label: string, updates: Partial<NavItem>, isBaseItem: boolean = false): void => {
+    if (isBaseItem) {
+      // 更新基础导航项
+      const index = baseItems.value.findIndex(item => t(item.label) === label)
+      if (index !== -1) {
+        const original = baseItems.value[index]
 
-    items.value = newItems
+        // 特殊处理国际化键
+        const translationUpdates: Partial<BaseItem> = {}
+        if ('label' in updates && updates.label) {
+          translationUpdates.label = updates.label
+        }
+        if ('description' in updates && updates.description) {
+          translationUpdates.description = updates.description
+        }
+
+        // 使用类型断言确保TypeScript不报错
+        baseItems.value[index] = {
+          ...original,
+          ...updates,
+          ...translationUpdates
+        } as BaseItem
+      }
+    } else {
+      // 更新动态导航项
+      const index = dynamicNavItems.value.findIndex(item => item.label === label)
+      if (index !== -1) {
+        // 使用类型断言确保TypeScript不报错
+        dynamicNavItems.value[index] = {
+          ...dynamicNavItems.value[index],
+          ...updates
+        } as NavItem
+      }
+    }
   }
 
+  // 返回合并后的导航项（固定项 + 动态添加的项）
+  const allItems = computed(() => [...items.value, ...dynamicNavItems.value])
+
   return {
-    items,
+    items: allItems,
     getNavItemByPath,
     addNavItem,
     updateNavItem

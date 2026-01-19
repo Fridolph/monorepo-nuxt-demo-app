@@ -43,6 +43,7 @@ const back = () => {
           color="neutral"
           variant="ghost"
         />
+        <OthersLangSelector />
       </template>
     </UHeader>
 

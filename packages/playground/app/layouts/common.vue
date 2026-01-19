@@ -17,7 +17,6 @@
 
       <template #right>
         <UColorModeButton />
-
         <UButton
           to="https://github.com/nuxt-ui-templates/starter"
           target="_blank"
@@ -26,6 +25,7 @@
           color="neutral"
           variant="ghost"
         />
+        <OthersLangSelector />
       </template>
     </UHeader>
 

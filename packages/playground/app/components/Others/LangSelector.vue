@@ -34,13 +34,21 @@ function getLanguageIcon(code: string): string {
       return 'i-heroicons-language'
   }
 }
+
+const isOpen = ref(false)
+function onSelect(option: any) {
+  selectedLanguage.value = option.value
+  isOpen.value = false
+}
 </script>
 
 <template>
   <div class="language-switcher">
     <UPopover
+      v-model:open="isOpen"
+      :dismissible="false"
       :ui="{
-        content: 'w-48'
+        content: 'w-24'
       }">
       <UButton
         color="neutral"
@@ -58,7 +66,7 @@ function getLanguageIcon(code: string): string {
             block
             variant="ghost"
             :class="{ 'bg-gray-100 dark:bg-gray-800': option.value === selectedLanguage }"
-            @click="selectedLanguage = option.value">
+            @click="onSelect(option)">
             <template #leading>
               <UIcon :name="option.icon" class="w-5 h-5 shrink-0" />
             </template>
