@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { withInteractionLog } from '~/composables/useInteractionLog'
-import { useCodeHighlighter } from '~/composables/content/useCodeHighlighter'
+import { useCodeHighlighter } from '~/composables/Contents/useCodeHighlighter'
 import { ref, computed } from 'vue'
 
 export interface CodeShowerProps {

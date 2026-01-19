@@ -10,7 +10,8 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@pinia/nuxt',
     'pinia-plugin-persistedstate',
-    '@nuxt/content'
+    '@nuxt/content',
+    '@nuxtjs/i18n' // 添加 i18n 模块
   ],
 
   imports: {
@@ -22,11 +23,6 @@ export default defineNuxtConfig({
         imports: ['definePersistedState']
       }
     ] // 自动导入 Vue 的 ref/onMounted 等 API
-  },
-
-  // 添加 Shiki 到 transpile 列表，确保它能被正确处理
-  build: {
-    transpile: ['shiki']
   },
 
   devtools: {
@@ -66,6 +62,11 @@ export default defineNuxtConfig({
     }
   },
 
+  // 添加 Shiki 到 transpile 列表，确保它能被正确处理
+  build: {
+    transpile: ['shiki']
+  },
+
   routeRules: {
   },
 
@@ -99,5 +100,30 @@ export default defineNuxtConfig({
         braceStyle: '1tbs'
       }
     }
+  },
+
+  // 添加 i18n 配置
+  i18n: {
+    defaultLocale: 'zh',
+    langDir: './',
+    locales: [
+      {
+        code: 'zh',
+        name: '简体中文',
+        file: 'zh.json'
+      },
+      {
+        code: 'en',
+        name: 'English',
+        file: 'en.json'
+      },
+      {
+        code: 'ja',
+        name: '日本語',
+        file: 'ja.json'
+      }
+    ],
+    strategy: 'prefix_except_default', // 默认语言不带前缀
+    vueI18n: './i18n.config.ts' // 指向自定义配置文件
   }
 })

@@ -96,7 +96,7 @@ export const UI_COMPONENT_CHILDREN: NavChildItem[] = [
     label: 'Content',
     icon: 'i-lucide-book-open',
     description: '内容展示组件',
-    to: '/nuxt-ui/content'
+    to: '/nuxt-ui/contents'
   },
   {
     label: 'Color Mode',

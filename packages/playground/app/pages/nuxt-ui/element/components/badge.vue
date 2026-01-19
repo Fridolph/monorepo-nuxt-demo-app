@@ -78,10 +78,10 @@ const decreaseNotifications = withInteractionLog(() => {
 // 生成代码示例
 const badgeCode = computed(() => {
   return `<UBadge
-  color="${selectedType === 'default' ? 'gray' : selectedType}"
-  variant="${selectedVariant}"
-  size="${selectedSize}"
-  :rounded="${isRounded}"
+  color="${selectedType.value === 'default' ? 'gray' : selectedType}"
+  variant="${selectedVariant.value}"
+  size="${selectedSize.value}"
+  :rounded="${isRounded.value}"
 >
   徽章文本
 </UBadge>`
@@ -89,10 +89,10 @@ const badgeCode = computed(() => {
 
 const badgeWithIconCode = computed(() => {
   return `<UBadge
-  color="${selectedType === 'default' ? 'gray' : selectedType}"
-  variant="${selectedVariant}"
-  size="${selectedSize}"
-  :rounded="${isRounded}"
+  color="${selectedType.value === 'default' ? 'gray' : selectedType}"
+  variant="${selectedVariant.value}"
+  size="${selectedSize.value}"
+  :rounded="${isRounded.value}"
 >
   <UIcon name="i-lucide-bell" class="mr-1" />
   通知
@@ -103,8 +103,8 @@ const notificationBadgeCode = computed(() => {
   return `<div class="relative">
   <UIcon name="i-lucide-bell" class="text-2xl" />
   <UBadge
-    color="${selectedType === 'default' ? 'gray' : selectedType}"
-    variant="${selectedVariant}"
+    color="${selectedType.value === 'default' ? 'gray' : selectedType}"
+    variant="${selectedVariant.value}"
     size="sm"
     :rounded="true"
     class="absolute -top-1 -right-1"
@@ -116,15 +116,15 @@ const notificationBadgeCode = computed(() => {
 
 const buttonWithBadgeCode = computed(() => {
   return `<UButton
-  color="${selectedType === 'default' ? 'gray' : selectedType}"
-  variant="${selectedVariant === 'solid' ? 'outline' : 'solid'}"
+  color="${selectedType.value === 'default' ? 'gray' : selectedType}"
+  variant="${selectedVariant.value === 'solid' ? 'outline' : 'solid'}"
 >
   消息
   <UBadge
-    color="${selectedType === 'default' ? 'gray' : selectedType}"
-    variant="${selectedVariant}"
+    color="${selectedType.value === 'default' ? 'info' : selectedType}"
+    variant="${selectedVariant.value}"
     size="sm"
-    :rounded="${isRounded}"
+    :rounded="${isRounded.value}"
     class="ml-2"
   >
     ${notifications.value}
@@ -136,7 +136,9 @@ const buttonWithBadgeCode = computed(() => {
 <template>
   <div class="space-y-8">
     <div>
-      <h3 class="text-lg font-medium mb-4">UBadge 徽章组件</h3>
+      <h3 class="text-lg font-medium mb-4">
+        UBadge 徽章组件
+      </h3>
       <p class="text-gray-500 dark:text-gray-400 mb-4">
         徽章是一种小型UI元素，用于显示状态、计数或标签信息。
       </p>
@@ -144,21 +146,24 @@ const buttonWithBadgeCode = computed(() => {
 
     <!-- 配置面板 -->
     <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-      <h4 class="font-medium mb-3">配置选项</h4>
+      <h4 class="font-medium mb-3">
+        配置选项
+      </h4>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <!-- 徽章类型 -->
         <div>
-          <p class="text-sm mb-2">徽章类型</p>
+          <p class="text-sm mb-2">
+            徽章类型
+          </p>
           <div class="flex flex-wrap gap-2">
             <UBadge
               v-for="type in badgeTypes"
               :key="type"
-              :color="type === 'default' ? 'gray' : type"
+              :color="type === 'default' ? 'info' : type"
               :variant="selectedType === type ? 'solid' : 'outline'"
               class="cursor-pointer"
-              @click="changeBadgeType(type)"
-            >
+              @click="changeBadgeType(type)">
               {{ type }}
             </UBadge>
           </div>
@@ -166,16 +171,17 @@ const buttonWithBadgeCode = computed(() => {
 
         <!-- 徽章变体 -->
         <div>
-          <p class="text-sm mb-2">徽章变体</p>
+          <p class="text-sm mb-2">
+            徽章变体
+          </p>
           <div class="flex flex-wrap gap-2">
             <UBadge
               v-for="variant in badgeVariants"
               :key="variant"
-              :color="selectedType === 'default' ? 'gray' : selectedType"
+              :color="selectedType === 'default' ? 'info' : selectedType"
               :variant="selectedVariant === variant ? variant : 'outline'"
               class="cursor-pointer"
-              @click="changeBadgeVariant(variant)"
-            >
+              @click="changeBadgeVariant(variant)">
               {{ variant }}
             </UBadge>
           </div>
@@ -183,17 +189,18 @@ const buttonWithBadgeCode = computed(() => {
 
         <!-- 徽章尺寸 -->
         <div>
-          <p class="text-sm mb-2">徽章尺寸</p>
+          <p class="text-sm mb-2">
+            徽章尺寸
+          </p>
           <div class="flex flex-wrap gap-2">
             <UBadge
               v-for="size in badgeSizes"
               :key="size"
-              :color="selectedType === 'default' ? 'gray' : selectedType"
+              :color="selectedType === 'default' ? 'info' : selectedType"
               :size="size"
               :variant="selectedVariant"
               class="cursor-pointer"
-              @click="changeBadgeSize(size)"
-            >
+              @click="changeBadgeSize(size)">
               {{ size }}
             </UBadge>
           </div>
@@ -201,13 +208,14 @@ const buttonWithBadgeCode = computed(() => {
 
         <!-- 圆角选项 -->
         <div>
-          <p class="text-sm mb-2">圆角选项</p>
+          <p class="text-sm mb-2">
+            圆角选项
+          </p>
           <UButton
-            :color="selectedType === 'default' ? 'gray' : selectedType"
+            :color="selectedType === 'default' ? 'info' : selectedType"
             :variant="selectedVariant"
             size="sm"
-            @click="toggleRounded"
-          >
+            @click="toggleRounded">
             {{ isRounded ? '禁用圆角' : '启用圆角' }}
           </UButton>
         </div>
@@ -215,103 +223,93 @@ const buttonWithBadgeCode = computed(() => {
     </div>
 
     <!-- 基础徽章 -->
-    <ContentCodeViewer
+    <ContentsCodeViewer
       title="基础徽章"
       description="最简单的徽章用法，可以根据需要设置不同的颜色、变体和尺寸。"
       :code="badgeCode"
-      language="vue"
-    >
+      language="vue">
       <div class="flex flex-wrap gap-3">
         <UBadge
-          :color="selectedType === 'default' ? 'gray' : selectedType"
+          :color="selectedType === 'default' ? 'info' : selectedType"
           :variant="selectedVariant"
           :size="selectedSize"
-          :rounded="isRounded"
-        >
+          :rounded="isRounded">
           徽章
         </UBadge>
       </div>
-    </ContentCodeViewer>
+    </ContentsCodeViewer>
 
     <!-- 带图标的徽章 -->
-    <ContentCodeViewer
+    <ContentsCodeViewer
       title="带图标的徽章"
       description="徽章可以包含图标，增强视觉效果和信息传达。"
       :code="badgeWithIconCode"
-      language="vue"
-    >
+      language="vue">
       <div class="flex flex-wrap gap-3">
         <UBadge
-          :color="selectedType === 'default' ? 'gray' : selectedType"
+          :color="selectedType === 'default' ? 'info' : selectedType"
           :variant="selectedVariant"
           :size="selectedSize"
-          :rounded="isRounded"
-        >
+          :rounded="isRounded">
           <UIcon name="i-lucide-bell" class="mr-1" />
           通知
         </UBadge>
 
         <UBadge
-          :color="selectedType === 'default' ? 'gray' : selectedType"
+          :color="selectedType === 'default' ? 'info' : selectedType"
           :variant="selectedVariant"
           :size="selectedSize"
-          :rounded="isRounded"
-        >
+          :rounded="isRounded">
           <UIcon name="i-lucide-check" class="mr-1" />
           已完成
         </UBadge>
       </div>
-    </ContentCodeViewer>
+    </ContentsCodeViewer>
 
     <!-- 通知徽章 -->
-    <ContentCodeViewer
+    <ContentsCodeViewer
       title="通知徽章"
       description="徽章常用于显示通知计数，可以放置在图标或按钮的角落。"
       :code="notificationBadgeCode"
-      language="vue"
-    >
+      language="vue">
       <div class="flex items-center gap-4">
         <UButton icon="i-lucide-minus" size="sm" @click="decreaseNotifications" />
         <div class="relative">
           <UIcon name="i-lucide-bell" class="text-2xl" />
           <UBadge
-            :color="selectedType === 'default' ? 'gray' : selectedType"
+            :color="selectedType === 'default' ? 'info' : selectedType"
             :variant="selectedVariant"
             :size="selectedSize === 'lg' ? 'md' : 'sm'"
             :rounded="true"
-            class="absolute -top-1 -right-1"
-          >
+            class="absolute -top-1 -right-1">
             {{ notifications }}
           </UBadge>
         </div>
         <UButton icon="i-lucide-plus" size="sm" @click="increaseNotifications" />
       </div>
-    </ContentCodeViewer>
+    </ContentsCodeViewer>
 
     <!-- 徽章在按钮中的应用 -->
-    <ContentCodeViewer
+    <ContentsCodeViewer
       title="徽章在按钮中的应用"
       description="徽章可以与按钮组合使用，显示相关的计数或状态信息。"
       :code="buttonWithBadgeCode"
-      language="vue"
-    >
+      language="vue">
       <div class="flex flex-wrap gap-3">
         <UButton
-          :color="selectedType === 'default' ? 'gray' : selectedType"
-          :variant="selectedVariant === 'solid' ? 'outline' : 'solid'"
-        >
+          :color="selectedType === 'default' ? 'info' : selectedType"
+          :variant="selectedVariant === 'solid' ? 'outline' : 'solid'">
           消息
           <UBadge
-            :color="selectedType === 'default' ? 'gray' : selectedType"
+            :color="selectedType === 'default' ? 'info' : selectedType"
             :variant="selectedVariant"
             :size="selectedSize === 'lg' ? 'md' : 'sm'"
             :rounded="isRounded"
-            class="ml-2"
-          >
+            class="ml-2">
             {{ notifications }}
           </UBadge>
         </UButton>
       </div>
-    </ContentCodeViewer>
+    </ContentsCodeViewer>
   </div>
 </template>

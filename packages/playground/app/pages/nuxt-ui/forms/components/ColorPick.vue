@@ -8,7 +8,7 @@ const text = computed(() => {
 </script>
 
 <template>
-  <ContentTitleWrap title="ColorPicker">
+  <ContentsTitleWrap title="ColorPicker">
     <UPopover>
       <UButton
         :label="text" color="neutral" variant="outline"
@@ -22,5 +22,5 @@ const text = computed(() => {
         <UColorPicker v-model="color" class="p-2" />
       </template>
     </UPopover>
-  </ContentTitleWrap>
+  </ContentsTitleWrap>
 </template>

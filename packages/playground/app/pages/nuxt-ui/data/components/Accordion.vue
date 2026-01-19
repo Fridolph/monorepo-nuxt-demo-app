@@ -113,7 +113,7 @@ ${SCRIPT_END}
     <h3>基础用法</h3>
     <UAccordion :items="items" />
 
-    <ContentCodeViewer
+    <ContentsCodeViewer
       title="UAccordion"
       description="高级用法，可添加 markdown content，更多查看文档"
       :code="alertCode"
@@ -131,6 +131,6 @@ ${SCRIPT_END}
           <MDC :value="item.content" unwrap="p" />
         </template>
       </UAccordion>
-    </ContentCodeViewer>
+    </ContentsCodeViewer>
   </section>
 </template>

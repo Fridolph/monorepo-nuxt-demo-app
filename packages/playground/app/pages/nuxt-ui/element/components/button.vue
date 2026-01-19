@@ -77,7 +77,9 @@ const loadingButtonCode = computed(() => {
 <template>
   <div class="space-y-8">
     <div>
-      <h3 class="text-lg font-medium mb-4">UButton 按钮组件</h3>
+      <h3 class="text-lg font-medium mb-4">
+        UButton 按钮组件
+      </h3>
       <p class="text-gray-500 dark:text-gray-400 mb-4">
         按钮是用户界面中最基本的交互元素，用于触发操作或事件。
       </p>
@@ -85,12 +87,16 @@ const loadingButtonCode = computed(() => {
 
     <!-- 配置面板 -->
     <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-      <h4 class="font-medium mb-3">配置选项</h4>
+      <h4 class="font-medium mb-3">
+        配置选项
+      </h4>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <!-- 按钮变体 -->
         <div>
-          <p class="text-sm mb-2">按钮变体</p>
+          <p class="text-sm mb-2">
+            按钮变体
+          </p>
           <div class="flex flex-wrap gap-2">
             <UButton
               v-for="variant in buttonVariants"
@@ -99,8 +105,7 @@ const loadingButtonCode = computed(() => {
               :variant="selectedVariant === variant ? variant : 'outline'"
               size="sm"
               class="cursor-pointer"
-              @click="changeButtonVariant(variant)"
-            >
+              @click="changeButtonVariant(variant)">
               {{ variant }}
             </UButton>
           </div>
@@ -108,7 +113,9 @@ const loadingButtonCode = computed(() => {
 
         <!-- 按钮颜色 -->
         <div>
-          <p class="text-sm mb-2">按钮颜色</p>
+          <p class="text-sm mb-2">
+            按钮颜色
+          </p>
           <div class="flex flex-wrap gap-2">
             <UButton
               v-for="color in buttonColors"
@@ -117,8 +124,7 @@ const loadingButtonCode = computed(() => {
               :variant="selectedVariant"
               size="sm"
               class="cursor-pointer"
-              @click="changeButtonColor(color)"
-            >
+              @click="changeButtonColor(color)">
               {{ color }}
             </UButton>
           </div>
@@ -126,7 +132,9 @@ const loadingButtonCode = computed(() => {
 
         <!-- 按钮尺寸 -->
         <div>
-          <p class="text-sm mb-2">按钮尺寸</p>
+          <p class="text-sm mb-2">
+            按钮尺寸
+          </p>
           <div class="flex flex-wrap gap-2">
             <UButton
               v-for="size in buttonSizes"
@@ -135,8 +143,7 @@ const loadingButtonCode = computed(() => {
               :variant="selectedVariant"
               :size="size"
               class="cursor-pointer"
-              @click="changeButtonSize(size)"
-            >
+              @click="changeButtonSize(size)">
               {{ size }}
             </UButton>
           </div>
@@ -145,60 +152,54 @@ const loadingButtonCode = computed(() => {
     </div>
 
     <!-- 基础按钮 -->
-    <ContentCodeViewer
+    <ContentsCodeViewer
       title="基础按钮"
       description="最基本的按钮用法，可以根据需要设置不同的颜色、变体和尺寸。"
       :code="buttonCode"
-      language="vue"
-    >
+      language="vue">
       <div class="flex flex-wrap gap-3">
         <UButton
           :color="selectedColor"
           :variant="selectedVariant"
-          :size="selectedSize"
-        >
+          :size="selectedSize">
           按钮
         </UButton>
       </div>
-    </ContentCodeViewer>
+    </ContentsCodeViewer>
 
     <!-- 带图标的按钮 -->
-    <ContentCodeViewer
+    <ContentsCodeViewer
       title="带图标的按钮"
       description="按钮可以包含图标，增强视觉效果和信息传达。"
       :code="buttonWithIconCode"
-      language="vue"
-    >
+      language="vue">
       <div class="flex flex-wrap gap-3">
         <UButton
           :color="selectedColor"
           :variant="selectedVariant"
           :size="selectedSize"
-          icon="i-lucide-heart"
-        >
+          icon="i-lucide-heart">
           喜欢
         </UButton>
       </div>
-    </ContentCodeViewer>
+    </ContentsCodeViewer>
 
     <!-- 加载中的按钮 -->
-    <ContentCodeViewer
+    <ContentsCodeViewer
       title="加载中的按钮"
       description="按钮可以显示加载状态，防止用户重复点击。"
       :code="loadingButtonCode"
       language="vue"
-      :default-open="true"
-    >
+      :default-open="true">
       <div class="flex flex-wrap gap-3">
         <UButton
           :color="selectedColor"
           :variant="selectedVariant"
           :size="selectedSize"
-          :loading="true"
-        >
+          :loading="true">
           加载中
         </UButton>
       </div>
-    </ContentCodeViewer>
+    </ContentsCodeViewer>
   </div>
 </template>

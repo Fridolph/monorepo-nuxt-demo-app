@@ -1,0 +1,12 @@
+{
+  "welcome": "ようこそ",
+  "app": {
+    "name": "私のアプリ",
+    "description": "これはNuxt.jsとi18nを使用したアプリケーションです"
+  },
+  "nav": {
+    "home": "ホーム",
+    "about": "私たちについて",
+    "contact": "お問い合わせ"
+  }
+}

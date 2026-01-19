@@ -92,7 +92,7 @@ ${SCRIPT_START}
 
 <template>
   <div class="flex-1 w-full">
-    <ContentCodeViewer
+    <ContentsCodeViewer
       title="UCarousel"
       description="可定制相关属性及控制方式"
       :code="carouselCode"
@@ -123,6 +123,6 @@ ${SCRIPT_START}
             class="rounded-lg">
         </div>
       </div>
-    </ContentCodeViewer>
+    </ContentsCodeViewer>
   </div>
 </template>

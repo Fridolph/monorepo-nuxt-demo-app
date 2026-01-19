@@ -1,0 +1,12 @@
+{
+  "welcome": "欢迎使用",
+  "app": {
+    "name": "我的应用",
+    "description": "这是一个使用 Nuxt.js 和 i18n 的应用"
+  },
+  "nav": {
+    "home": "首页",
+    "about": "关于我们",
+    "contact": "联系我们"
+  }
+}

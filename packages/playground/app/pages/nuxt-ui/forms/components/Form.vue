@@ -10,7 +10,7 @@ const {
 </script>
 
 <template>
-  <ContentTitleWrap title="Form & Zod Validate">
+  <ContentsTitleWrap title="Form & Zod Validate">
     <p>
       用途: <br>
       使用 Form 组件，使用任何支持标准模式的验证库或您自己的验证逻辑来验证表单数据。
@@ -130,5 +130,5 @@ const {
         Submit
       </UButton>
     </UForm>
-  </ContentTitleWrap>
+  </ContentsTitleWrap>
 </template>

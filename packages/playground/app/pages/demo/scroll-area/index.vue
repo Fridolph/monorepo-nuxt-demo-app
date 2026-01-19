@@ -78,7 +78,7 @@ ${SCRIPT_END}
       可滚动 & 虚拟列表
     </h2>
 
-    <ContentCodeViewer
+    <ContentsCodeViewer
       title="UScrollArea"
       description="支持滚动的虚拟瀑布流列表"
       :code="scrollAreaCode"
@@ -101,6 +101,6 @@ ${SCRIPT_END}
           loading="lazy"
           class="rounded-md size-full object-cover">
       </UScrollArea>
-    </ContentCodeViewer>
+    </ContentsCodeViewer>
   </NuxtLayout>
 </template>

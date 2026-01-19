@@ -37,7 +37,7 @@ const buttonCode = computed(() => {
         </div>
       </div>
 
-      <ContentCodeViewer
+      <ContentsCodeViewer
         title="基础按钮"
         description="基础按钮组件，可以设置不同的变体样式。"
         :code="buttonCode">
@@ -48,7 +48,7 @@ const buttonCode = computed(() => {
             按钮
           </UButton>
         </div>
-      </ContentCodeViewer>
+      </ContentsCodeViewer>
     </div>
   </NuxtLayout>
 </template>

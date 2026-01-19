@@ -1,12 +1,12 @@
 <template>
-  <ContentTitleWrap class="w-100" title="Checkbox & checkboxGroup">
+  <ContentsTitleWrap class="w-100" title="Checkbox & checkboxGroup">
     <UCheckboxGroup v-model="value" :items="items" orientation="horizontal" />
 
     <h3>
       group and disabled
     </h3>
     <UCheckboxGroup v-model="value2" :items="dItems" />
-  </ContentTitleWrap>
+  </ContentsTitleWrap>
 </template>
 
 <script setup lang="ts">

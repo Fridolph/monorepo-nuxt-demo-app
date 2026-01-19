@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { useCodeHighlighter } from '~/composables/content/useCodeHighlighter'
+import { useCodeHighlighter } from '~/composables/Contents/useCodeHighlighter'
 
 export interface JsonEditorProps {
   /**
