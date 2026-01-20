@@ -1,7 +1,10 @@
 <script setup lang="ts">
-defineProps<{
+withDefaults(defineProps<{
   layoutClass?: string
-}>()
+  useLog?: boolean
+}>(), {
+  useLog: false
+})
 const router = useRouter()
 const back = () => {
   router.back()
@@ -16,11 +19,11 @@ const back = () => {
           <AppLogo class="w-auto h-6 shrink-0" />
         </NuxtLink>
 
-        <TemplateMenu />
+        <!-- <TemplateMenu /> -->
 
         <UButton
           variant="outline" size="xs"
-          class="text-xs cursor-pointer absolute left-4 top-5"
+          class="text-xs cursor-pointer translate-y-0.5 ml-1"
           @click="back">
           <UIcon name="mdi:arrow-left" class="size-4" />
           Prev
@@ -40,16 +43,17 @@ const back = () => {
           color="neutral"
           variant="ghost"
         />
+        <FormsLangSelector />
       </template>
     </UHeader>
 
     <UMain class="p-4">
       <section class="flex flex-col gap-4">
-        <div class="grid grid-cols-3 gap-6">
-          <div class="col-span-2" :class="layoutClass">
+        <div class="gap-6" :class="useLog ? 'grid grid-cols-3' : 'flex flex-col'">
+          <div :class="[layoutClass, useLog ? 'col-span-2' : '']">
             <slot />
           </div>
-          <InteractionLog class="self-start" />
+          <InteractionLog v-if="useLog" class="self-start" />
         </div>
       </section>
     </UMain>

@@ -3,9 +3,10 @@
 </script>
 
 <template>
-  <div>
-    <!-- TODO 1. 逐步完善 Editor 模块里的内容 -->
-  </div>
+  <NuxtLayout name="uicomp" layout-class="flex flex-col gap-4">
+    <!-- TODO 逐步完善 Editor 模块里的内容 -->
+    Editor
+  </NuxtLayout>
 </template>
 
 <style scoped>

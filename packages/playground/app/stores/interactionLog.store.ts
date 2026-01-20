@@ -78,6 +78,7 @@ export const useInteractionLogStore = defineStore(KEY_INTERACTION_LOG, () => {
 }, {
   persist: {
     storage: 'localStorage',
-    key: KEY_INTERACTION_LOG
+    key: KEY_INTERACTION_LOG,
+    paths: ['logs']
   }
 })

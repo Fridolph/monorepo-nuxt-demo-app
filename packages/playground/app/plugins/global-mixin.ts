@@ -1,5 +1,5 @@
 // plugins/global-mixin.ts
-import { useInteractionLog } from '~/composables/global/useInteractionLog'
+import { useInteractionLog } from '~/composables/useInteractionLog'
 
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.mixin({

@@ -2,18 +2,27 @@
 export default defineNuxtConfig({
   modules: [
     '@nuxt/eslint',
+    '@nuxtjs/i18n',
     '@nuxt/ui',
     '@nuxt/scripts',
     '@nuxt/test-utils',
     '@nuxt/image',
+    '@nuxtjs/mdc',
     '@vueuse/nuxt',
     '@pinia/nuxt',
-    'pinia-plugin-persistedstate'
+    'pinia-plugin-persistedstate',
+    '@nuxt/content'
   ],
 
   imports: {
     autoImport: true,
-    presets: ['vue'] // 自动导入 Vue 的 ref/onMounted 等 API
+    presets: [
+      'vue',
+      {
+        from: 'pinia-plugin-persistedstate',
+        imports: ['definePersistedState']
+      }
+    ] // 自动导入 Vue 的 ref/onMounted 等 API
   },
 
   devtools: {
@@ -42,8 +51,23 @@ export default defineNuxtConfig({
     fonts: false
   },
 
+  // 配置持久化存储
+  appConfig: {
+    piniaPersistedstate: {
+      storage: 'localStorage', // 默认存储方式
+      cookieOptions: {
+        sameSite: 'strict',
+        maxAge: 90 * 24 * 60 * 60 // 三月
+      }
+    }
+  },
+
+  // 添加 Shiki 到 transpile 列表，确保它能被正确处理
+  build: {
+    transpile: ['shiki']
+  },
+
   routeRules: {
-    '/': { prerender: true }
   },
 
   devServer: {
@@ -76,5 +100,16 @@ export default defineNuxtConfig({
         braceStyle: '1tbs'
       }
     }
+  },
+  // 添加 i18n 配置
+  i18n: {
+    defaultLocale: 'zh',
+    strategy: 'no_prefix',
+    lazy: false,
+    locales: [
+      { code: 'zh', name: 'Chinese', file: 'zh.json' },
+      { code: 'en', name: 'English', file: 'en.json' }
+    ],
+    preload: ['zh', 'en']
   }
 })

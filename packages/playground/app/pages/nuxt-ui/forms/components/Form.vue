@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import useForms from '../composables/useForms'
+import useForms from '../composables/useForm'
 
 const {
   schema, formData,
   sexList, hobbyList, colorChip, colorText, mottoItems,
-  onSubmit, isDateDisabled,
+  onSubmit, onSubmitError, isDateDisabled,
   inputDateRef
 } = useForms()
 </script>
 
 <template>
-  <ContentTitleWrap title="Form & Zod Validate">
+  <ContentsTitleWrap title="Form & Zod Validate">
     <p>
       用途: <br>
       使用 Form 组件，使用任何支持标准模式的验证库或您自己的验证逻辑来验证表单数据。
@@ -22,7 +22,7 @@ const {
 
     <UForm
       :schema="schema" :state="formData" class="w-auto space-y-4"
-      @submit="onSubmit">
+      @submit="onSubmit" @error="onSubmitError">
       <UFormField
         required label="Email" name="email">
         <UInput v-model="formData.email" class="w-50" />
@@ -130,5 +130,5 @@ const {
         Submit
       </UButton>
     </UForm>
-  </ContentTitleWrap>
+  </ContentsTitleWrap>
 </template>

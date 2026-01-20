@@ -1,6 +1,3 @@
-// composables/useLog.ts
-import { useInteractionLogStore } from '~/stores/interactionLog.store'
-
 /**
  * 日志组合式函数
  * 用于快速创建带有日志功能的点击事件

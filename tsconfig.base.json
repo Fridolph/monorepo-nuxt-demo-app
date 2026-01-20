@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    // 其他配置...
+    "resolveJsonModule": true,
+    "esModuleInterop": true
+  }
+}
