@@ -84,7 +84,7 @@ const alertCode = computed(() => {
 
     <div class="grid grid-cols-1 gap-6">
       <USkeleton v-if="!isShowAlert" class="self-start h-50" />
-      <ContentCodeViewer
+      <ContentsCodeViewer
         v-else
         title="可配置的警告组件"
         description="这个警告组件具有自定义的颜色、变体、关闭按钮和操作按钮。"
@@ -111,7 +111,7 @@ const alertCode = computed(() => {
             }
           ]"
         />
-      </ContentCodeViewer>
+      </ContentsCodeViewer>
     </div>
   </div>
 </template>

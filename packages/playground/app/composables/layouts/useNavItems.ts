@@ -15,54 +15,53 @@ export interface NavItem {
   children?: NavItem[]
 }
 
-// 获取BaseItem类型，用于基础导航项
-type BaseItem = {
-  label: string
-  icon: string
-  description: string
-  to: string
-  disabled?: boolean
-  badge?: string | number
-  isNew?: boolean
-  children?: BaseItem[]
-}
-
 /**
  * 导航菜单项组合式函数
  * @returns 导航菜单项数据
  */
 export default function useNavItems() {
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
 
-  // 基础导航项数据源
+  // 基础导航项数据源 - 修正：仅存储键名，不立即翻译
   const baseItems = ref([
     {
-      label: 'nav.nuxt_comp',
+      labelKey: 'nav.nuxt_comp', // 修改：存储键名而非翻译后的值
       icon: 'i-lucide-layers',
-      description: 'nav.nuxt_comp_desc',
+      descriptionKey: 'nav.nuxt_comp_desc', // 修改：存储键名而非翻译后的值
       to: '/nuxt-ui'
       // children: UI_COMPONENT_CHILDREN
     },
     {
-      label: 'nav.demo',
+      labelKey: 'nav.demo', // 修改：存储键名而非翻译后的值
       icon: 'i-lucide-layers',
-      description: 'nav.demo_desc',
+      descriptionKey: 'nav.demo_desc', // 修改：存储键名而非翻译后的值
       to: '/demo'
     },
     {
-      label: 'nav.idea',
+      labelKey: 'nav.idea', // 修改：存储键名而非翻译后的值
       icon: 'mdi:head-lightbulb-outline',
-      description: 'nav.idea_desc',
+      descriptionKey: 'nav.idea_desc', // 修改：存储键名而非翻译后的值
       to: '/idea'
     }
   ])
 
-  // 将基础数据源转换为计算属性，实现国际化
-  const items = computed<NavItem[]>(() => baseItems.value.map(item => ({
-    ...item,
-    label: t(item.label),
-    description: t(item.description)
-  })))
+  // 关键修改：明确依赖locale，确保语言切换时重新计算
+  const items = computed<NavItem[]>(() => {
+    // 显式引用locale.value以创建依赖
+    const currentLocale = locale.value
+
+    return baseItems.value.map(item => ({
+      // 使用回退值，确保当翻译不存在时显示友好文本
+      label: t(item.labelKey) || item.labelKey.split('.').pop() || item.labelKey,
+      icon: item.icon,
+      description: t(item.descriptionKey) || item.descriptionKey.split('.').pop() || item.descriptionKey,
+      to: item.to,
+      disabled: item.disabled,
+      badge: item.badge,
+      isNew: item.isNew,
+      children: item.children
+    }))
+  })
 
   /**
    * 获取特定路径的导航项
@@ -106,32 +105,39 @@ export default function useNavItems() {
    */
   const updateNavItem = (label: string, updates: Partial<NavItem>, isBaseItem: boolean = false): void => {
     if (isBaseItem) {
-      // 更新基础导航项
-      const index = baseItems.value.findIndex(item => t(item.label) === label)
+      // 找到原始项
+      const index = baseItems.value.findIndex((item) => {
+        const translatedLabel = t(item.labelKey) || item.labelKey
+        return translatedLabel === label
+      })
+
       if (index !== -1) {
         const original = baseItems.value[index]
+        const updatedItem = { ...original }
 
-        // 特殊处理国际化键
-        const translationUpdates: Partial<BaseItem> = {}
-        if ('label' in updates && updates.label) {
-          translationUpdates.label = updates.label
-        }
-        if ('description' in updates && updates.description) {
-          translationUpdates.description = updates.description
+        // 更新非国际化属性
+        if (updates.icon !== undefined) updatedItem.icon = updates.icon
+        if (updates.to !== undefined) updatedItem.to = updates.to
+        if (updates.disabled !== undefined) updatedItem.disabled = updates.disabled
+        if (updates.badge !== undefined) updatedItem.badge = updates.badge
+        if (updates.isNew !== undefined) updatedItem.isNew = updates.isNew
+
+        // 更新国际化相关属性需谨慎，这里仅作示例
+        if (updates.label !== undefined) {
+          console.warn('直接更新label会导致失去i18n功能，建议更新i18n文件')
         }
 
-        // 使用类型断言确保TypeScript不报错
-        baseItems.value[index] = {
-          ...original,
-          ...updates,
-          ...translationUpdates
-        } as BaseItem
+        if (updates.description !== undefined) {
+          console.warn('直接更新description会导致失去i18n功能，建议更新i18n文件')
+        }
+
+        // 应用更新
+        baseItems.value[index] = updatedItem
       }
     } else {
       // 更新动态导航项
       const index = dynamicNavItems.value.findIndex(item => item.label === label)
       if (index !== -1) {
-        // 使用类型断言确保TypeScript不报错
         dynamicNavItems.value[index] = {
           ...dynamicNavItems.value[index],
           ...updates

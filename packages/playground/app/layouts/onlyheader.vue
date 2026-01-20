@@ -21,7 +21,7 @@
           color="neutral"
           variant="ghost"
         />
-        <OthersLangSelector />
+        <FormsLangSelector />
       </template>
     </UHeader>
 

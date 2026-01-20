@@ -2,6 +2,7 @@
 export default defineNuxtConfig({
   modules: [
     '@nuxt/eslint',
+    '@nuxtjs/i18n',
     '@nuxt/ui',
     '@nuxt/scripts',
     '@nuxt/test-utils',
@@ -10,8 +11,7 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@pinia/nuxt',
     'pinia-plugin-persistedstate',
-    '@nuxt/content',
-    '@nuxtjs/i18n' // 添加 i18n 模块
+    '@nuxt/content'
   ],
 
   imports: {
@@ -101,29 +101,15 @@ export default defineNuxtConfig({
       }
     }
   },
-
   // 添加 i18n 配置
   i18n: {
     defaultLocale: 'zh',
-    langDir: './',
+    strategy: 'no_prefix',
+    lazy: false,
     locales: [
-      {
-        code: 'zh',
-        name: 'ZH',
-        file: 'zh.json'
-      },
-      {
-        code: 'en',
-        name: 'EN',
-        file: 'en.json'
-      },
-      {
-        code: 'ja',
-        name: 'JA',
-        file: 'ja.json'
-      }
+      { code: 'zh', name: 'Chinese', file: 'zh.json' },
+      { code: 'en', name: 'English', file: 'en.json' }
     ],
-    strategy: 'prefix_except_default', // 默认语言不带前缀
-    vueI18n: './i18n.config.ts' // 指向自定义配置文件
+    preload: ['zh', 'en']
   }
 })
