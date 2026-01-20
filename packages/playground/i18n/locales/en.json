@@ -13,6 +13,7 @@
     "demo": "Demo",
     "demo_desc": "Interactive Demo Showcase",
     "idea": "Idea",
-    "idea_desc": "Creative Ideas Zone"
+    "idea_desc": "Creative Ideas Zone",
+    "nuxt_ui": "Nuxt UI"
   }
 }

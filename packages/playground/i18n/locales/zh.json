@@ -8,6 +8,7 @@
     "home": "首页",
     "about": "关于我们",
     "contact": "联系我们",
+    "nuxt_ui": "Nuxt UI",
     "nuxt_comp": "Nuxt UI",
     "nuxt_comp_desc": "Nuxt UI 组件库",
     "demo": "Demo",
