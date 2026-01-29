@@ -124,13 +124,13 @@ function getDropdownActions(user: User): DropdownMenuItem[][] {
       JSON编辑器示例
     </h1>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="grid grid-cols-2 gap-8">
       <!-- 编辑器区域 -->
       <div>
         <h2 class="text-xl font-semibold mb-4">
           编辑 data 数据 （JSON）
         </h2>
-        <JsonEditor
+        <ContentsJsonEditor
           v-model="tableData"
           title="商品列表 数据"
           description="编辑商品列表数据，格式必须是有效的JSON数组"
@@ -150,7 +150,7 @@ function getDropdownActions(user: User): DropdownMenuItem[][] {
             数据格式错误
           </UBadge>
 
-          <UTable :data="tableData" :columns="columns" class="flex-1">
+          <UTable :data="tableData" :columns="columns" class="w-full">
             <template #name-cell="{ row }">
               <div class="flex items-center gap-3">
                 <UAvatar

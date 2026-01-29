@@ -1,0 +1,44 @@
+name: Sync to Main
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type "sync" to confirm'
+        required: true
+        default: ''
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    if: github.event.inputs.confirm == 'sync'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: dev
+          fetch-depth: 0
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Sync files to main
+        run: |
+          # Checkout main branch
+          git checkout main
+
+          # Remove all tracked files except .git
+          git rm -rf . || true
+
+          # Checkout specific files from dev
+          git checkout dev -- skills/ .github/ README.md AGENTS.md CLAUDE.md LICENSE
+
+          # Commit and push if there are changes
+          git add -A
+          if git diff --staged --quiet; then
+            echo "No changes to sync"
+          else
+            git commit -m "sync: update from dev branch"
+            git push origin main
+          fi

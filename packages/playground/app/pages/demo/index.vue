@@ -18,7 +18,7 @@ const demoItems = ref<CardItem[]>([
   {
     title: 'JSON 数据实时展示',
     desc: '允许用户手动编辑数据，进行校验后，实时应用（为了配合 Quote 演示 Demo）',
-    to: '/demo/quote-calc'
+    to: '/demo/json-viewer'
   },
   {
     title: 'Quote 实时报价',

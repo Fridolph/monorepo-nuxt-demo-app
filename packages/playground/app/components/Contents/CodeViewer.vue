@@ -34,7 +34,7 @@ const props = withDefaults(defineProps<CodeShowerProps>(), {
   title: '',
   description: '',
   language: 'html',
-  defaultOpen: false,
+  defaultOpen: true,
   previewClass: ''
 })
 
@@ -113,7 +113,7 @@ const { highlightedCode, isHighlighterLoaded } = useCodeHighlighter(
 
     <!-- 预览区域 -->
     <div
-      class="demo-wrapper min-h-[100px] bg-white dark:bg-gray-900"
+      class="demo-wrapper bg-white dark:bg-gray-900"
       :class="previewClass">
       <slot />
     </div>
