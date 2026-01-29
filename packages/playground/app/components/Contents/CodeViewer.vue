@@ -100,7 +100,7 @@ const { highlightedCode, isHighlighterLoaded } = useCodeHighlighter(
 </script>
 
 <template>
-  <div class="content-code-demo w-full flex flex-col gap-2 dark:border-gray-700">
+  <div class="content-code-demo w-full flex flex-col dark:border-gray-700">
     <!-- 标题和描述 -->
     <div v-if="title || description" class=" ">
       <h3 v-if="title" class="text-lg font-medium">
@@ -151,7 +151,7 @@ const { highlightedCode, isHighlighterLoaded } = useCodeHighlighter(
           <UIcon name="i-lucide-loader" class="animate-spin mr-2" />
           代码高亮加载中...
         </div>
-        <div v-else class="shiki-wrapper bg-gray-50 p-2 text-sm" v-html="highlightedCode" />
+        <div v-else class="shiki-wrapper bg-gray-50 p-2 text-sm overflow-x-auto" v-html="highlightedCode" />
       </div>
     </div>
   </div>
@@ -162,20 +162,25 @@ const { highlightedCode, isHighlighterLoaded } = useCodeHighlighter(
 ::deep(.shiki-wrapper) {
   padding: 0;
   margin: 0;
+  overflow-x: auto; /* 添加水平滚动 */
 
   /* 调整 shiki 生成的代码样式 */
   pre {
     margin: 0 !important;
     border-radius: 0 !important;
     border: none !important;
+    white-space: pre !important; /* 确保空白符保留，不换行 */
+    overflow-x: visible !important; /* 允许内容超出 */
   }
   code {
-    width: 100%;
+    width: auto;
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   }
 }
 
 :deep(.shiki) {
   background-color: transparent !important;
+  min-width: 100%; /* 确保代码至少与容器一样宽 */
+  display: inline-block; /* 使元素宽度适应内容 */
 }
 </style>
