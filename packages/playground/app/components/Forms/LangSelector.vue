@@ -103,9 +103,9 @@ function onSelect(option: any) {
 
 // 在 onMounted 中添加更多诊断信息
 onMounted(() => {
-  console.log('LangSelector 已挂载')
-  console.log('当前语言:', locale.value)
-  console.log('可用语言:', locales.value)
+  // console.log('LangSelector 已挂载')
+  // console.log('当前语言:', locale.value)
+  // console.log('可用语言:', locales.value)
 
   // 初始化时，预加载所有语言文件
   if (typeof window !== 'undefined') {

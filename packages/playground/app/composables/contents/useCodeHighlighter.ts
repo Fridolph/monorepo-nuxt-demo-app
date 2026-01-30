@@ -28,7 +28,7 @@ export function useCodeHighlighter(
   // 更新高亮代码的方法
   const updateHighlightedCode = () => {
     if (highlighter) {
-      highlightedCode.value = highlighter.codeToHtml(code.value, {
+      highlightedCode.value = highlighter?.codeToHtml(code.value, {
         lang: language.value,
         theme: theme.value
       })

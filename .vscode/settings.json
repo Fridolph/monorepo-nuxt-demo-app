@@ -20,5 +20,8 @@
   "i18n-ally.annotations": true,
   "i18n-ally.annotationInPlace": true,
   "i18n-ally.pathMatcher": "{locale}.json",
-  "i18n-ally.namespace": false
+  "i18n-ally.namespace": false,
+  "conventionalCommits.scopes": [
+    "quote calculator save"
+  ]
 }

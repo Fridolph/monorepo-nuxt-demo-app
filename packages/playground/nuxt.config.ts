@@ -11,7 +11,8 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@pinia/nuxt',
     'pinia-plugin-persistedstate',
-    '@nuxt/content'
+    '@nuxt/content',
+    'nuxt-radash'
   ],
 
   imports: {

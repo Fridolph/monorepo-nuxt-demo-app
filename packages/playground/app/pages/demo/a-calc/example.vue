@@ -137,7 +137,7 @@ function testBusinessLogic() {
   }
 
   // 计算成本税率和含税成本
-  const sumLineCostRate = Number(calcTax({ value: sumLineCost, rate: taxRate }))
+  const sumLineCostRate = calcTax({ value: sumLineCost, rate: taxRate })
   const sumLineCostWithRate = Number(calcWithTax({ value: sumLineCost, tax: sumLineCostRate }))
 
   // 计算总价格和税率

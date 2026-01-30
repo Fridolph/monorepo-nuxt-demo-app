@@ -228,7 +228,8 @@ const togglePanel = () => {
       <!-- 编辑模式使用textarea -->
       <div v-else class="relative">
         <textarea
-          v-model="jsonText" class="w-full font-mono text-sm p-3 bg-gray-50 dark:bg-gray-900 outline-none resize-none border-0" :style="{ height }"
+          v-model="jsonText" class="w-full font-mono text-sm p-3 bg-gray-50 dark:bg-gray-900 outline-none resize-none border-0"
+          style="resize: auto" :rows="10"
           :class="{ 'border-red-500': parseError }"
           @input="handleInput"
           @blur="handleBlur"

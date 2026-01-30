@@ -8,7 +8,7 @@ export const mainList = [
     unitPrice: 777,
     margin: null,
     lineCost: null,
-    linePrice: 28749,
+    linePrice: 10000,
     isHidePrice: 1,
     isHideItem: null
   },
@@ -21,7 +21,7 @@ export const mainList = [
     unitPrice: 666,
     margin: null,
     lineCost: null,
-    linePrice: 666,
+    linePrice: 1000,
     sort: null,
     isHidePrice: 1,
     isHideItem: null
@@ -38,7 +38,7 @@ export const mainList = [
     unitPrice: 277.5,
     margin: null,
     lineCost: null,
-    linePrice: 555,
+    linePrice: 2000,
     sort: null,
     isHidePrice: 1,
     isHideItem: null

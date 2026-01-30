@@ -39,8 +39,10 @@
     "mitt": "^3.0.1",
     "nanoid": "^5.1.6",
     "nuxt": "^4.2.2",
+    "nuxt-radash": "^1.0.0",
     "pinia": "^3.0.4",
     "pinia-plugin-persistedstate": "^4.7.1",
+    "radash": "^12.1.1",
     "shiki": "^3.21.0",
     "zod": "^4.3.5"
   },
