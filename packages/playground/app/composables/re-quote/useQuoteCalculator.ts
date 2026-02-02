@@ -19,7 +19,7 @@ export const calcMarginPercentage = calc('profit / price * 100')
 export const calcSum = (items: any[], fns: () => any[]) => {
   try {
     // 去掉格式化参数 | =2，只保留 'itemPrice'，或者完全去掉第一个参数
-    return calc_sum('itemPrice', fns()) || 0 // 确保返回数字
+    return calc_sum('itemPrice | =2', fns()) || 0 // 确保返回数字
   } catch (err) {
     console.error('计算错误:', err)
     return 0 // 出错时返回 0
@@ -64,7 +64,12 @@ export default function useQuoteCalculator() {
     totalPrice: null
   })
   const setDefaultDeductions = (deductions: Record<string, any>) => {
+    // 确保deduction是一个有效的JSON字符串
+    if (typeof deductions.deduction === 'object') {
+      deductions.deduction = JSON.stringify(deductions.deduction)
+    }
     defaultDeductions.value = deductions
+    console.log('设置了defaultDeductions:', defaultDeductions.value)
   }
 
   // 子组件经常用到，干脆直接弄成 computed 方便获取
@@ -100,6 +105,7 @@ export default function useQuoteCalculator() {
         .map(mapAuDecItem)
         .filter(item => item?.switch && item.support)
 
+      console.log('解析后的parsedDeductionArray:', parsedDeductionArray)
       return { parsedDeductionData, parsedDeductionArray }
     } catch (err) {
       console.error('parsedDeductions error:', err)
@@ -133,6 +139,7 @@ export default function useQuoteCalculator() {
   const setDiscountData = (data: Record<string, any>) => discountData.value = data
   const setDiscountItem = <K extends keyof Record<string, any>>(key: K, value: Record<string, any>[K]) => {
     discountData.value[key] = value
+    console.log(`设置折扣项 ${key}:`, value)
   }
 
   const billInfoValue = ref<Record<string, any>>({} as Record<string, any>)
@@ -144,9 +151,11 @@ export default function useQuoteCalculator() {
    */
   function calculateProductGroupTotalExclRate(products: any[]) {
     if (!products || products.length === 0) return 0
-    return calcSum(products, () => products.map((p) => {
-      return { itemPrice: p?.linePrice || 0 }
-    }))
+    // 使用产品中的linePrice属性直接计算，不需要额外包装
+    const result = calcSum(products, () => products.map(p => ({
+      itemPrice: Number(p?.linePrice || 0)
+    })))
+    return result
   }
 
   /**
@@ -156,9 +165,12 @@ export default function useQuoteCalculator() {
    */
   function calculateProductGroupTotalCostExclRate(products: any[]) {
     if (!products || products.length === 0) return 0
-    return calcSum(products, () => products.map((p) => {
-      return { itemPrice: p?.lineCost || 0 }
-    }))
+    // 使用产品中的lineCost属性直接计算，确保它是一个数字
+    const result = calcSum(products, () => products.map(p => ({
+      itemPrice: Number(p?.lineCost || 0)
+    })))
+    console.log(`计算产品组成本: ${result}, 基于 ${products.length} 个产品`)
+    return result
   }
 
   /**
@@ -170,11 +182,11 @@ export default function useQuoteCalculator() {
    * @returns 含税系统总价
    */
   function calculateSystemTotalInclRate(
-    keyProductsExclRate: number,
-    bosExclRate: number,
-    acExclRate: number,
-    taxRateValue: number
-  ) {
+    keyProductsExclRate: number | string,
+    bosExclRate: number | string,
+    acExclRate: number | string,
+    taxRateValue: number | string
+  ): number | string {
     const systemTotalExclRate = calc('keyProductsExclRate + bosExclRate + acExclRate')({
       keyProductsExclRate,
       bosExclRate,
@@ -193,33 +205,38 @@ export default function useQuoteCalculator() {
    */
   function calculateDiscountAmount(
     discountDataValue: Record<string, any>,
-    systemTotalInclRate: number,
-    systemTotalExclRate: number,
-    taxRateValue: number
+    systemTotalInclRate: number | string,
+    systemTotalExclRate: number | string,
+    taxRateValue: number | string
   ) {
+    console.log('计算折扣金额, discountData:', discountDataValue)
+
     // 不启用折扣
-    if (!discountDataValue.discountSwitch)
+    if (!discountDataValue.discountSwitch) {
+      console.log('折扣未启用，返回0')
       return { discountAmountInclRate: 0, discountAmountExclRate: 0 }
+    }
 
     let discountAmountInclRate = 0
     let discountAmountExclRate = 0
 
     // 固定金额折扣
     if (discountDataValue.discountType === 1) {
-      discountAmountInclRate = discountDataValue.discountAmount || 0
+      discountAmountInclRate = Number(discountDataValue.discountAmount) || 0
       // 计算不含税折扣
-      discountAmountExclRate = calcExclRateFromInclRate({
+      discountAmountExclRate = Number(calcExclRateFromInclRate({
         priceInclRate: discountAmountInclRate,
         taxRate: taxRateValue
-      })
-    }
-    // 百分比折扣
-    else {
-      const percentage = discountDataValue.discountRatio || 0
+      }))
+      // console.log(`固定金额折扣: ${discountAmountInclRate}(含税), ${discountAmountExclRate}(不含税)`)
+    } else {
+      // 百分比折扣
+      const percentage = Number(discountDataValue.discountRatio) || 0
       // 含税金额折扣
-      discountAmountInclRate = calcPercentage({ value: systemTotalInclRate, percentage })
+      discountAmountInclRate = Number(calcPercentage({ value: systemTotalInclRate, percentage }))
       // 不含税金额折扣 - 直接用不含税金额计算
-      discountAmountExclRate = calcPercentage({ value: systemTotalExclRate, percentage })
+      discountAmountExclRate = Number(calcPercentage({ value: systemTotalExclRate, percentage }))
+      console.log(`百分比折扣 ${percentage}%: ${discountAmountInclRate}(含税), ${discountAmountExclRate}(不含税)`)
     }
 
     return { discountAmountInclRate, discountAmountExclRate }
@@ -231,12 +248,16 @@ export default function useQuoteCalculator() {
    * @returns 扣减金额分类统计
    */
   function calculateCustomDeductionsTotalAmount(deductions: any[]) {
+    console.log('计算自定义扣减项, deductions:', deductions)
+
     if (!Array.isArray(deductions) || deductions.length === 0) {
+      console.log('没有自定义扣减项，返回0')
       return { gstFreeAmount: 0, gstExclAmount: 0, gstInclAmount: 0 }
     }
 
     // 过滤掉正在创建的项
     const validItems = deductions.filter(item => !item.isCreating)
+    console.log('有效扣减项数量:', validItems.length)
 
     // 按税类型分组
     const gstFreeItems = validItems.filter(item => item.gstType === 'gst_free')
@@ -246,12 +267,19 @@ export default function useQuoteCalculator() {
     )
 
     // 计算各组合计
-    const gstFreeAmount = calcSum(gstFreeItems, () => gstFreeItems.map(item => item.linePrice || 0))
+    const gstFreeAmount = calcSum(gstFreeItems, () => gstFreeItems.map(item => ({
+      itemPrice: Number(item.linePrice || 0)
+    })))
 
-    const gstExclAmount = calcSum(exclGstItems, () => exclGstItems.map(item => item.linePrice || 0))
+    const gstExclAmount = calcSum(exclGstItems, () => exclGstItems.map(item => ({
+      itemPrice: Number(item.linePrice || 0)
+    })))
 
-    const gstInclAmount = calcSum(inclGstItems, () => inclGstItems.map(item => item.linePrice || 0))
+    const gstInclAmount = calcSum(inclGstItems, () => inclGstItems.map(item => ({
+      itemPrice: Number(item.linePrice || 0)
+    })))
 
+    console.log(`自定义扣减项合计: 免税=${gstFreeAmount}, 不含税=${gstExclAmount}, 含税=${gstInclAmount}`)
     return { gstFreeAmount, gstExclAmount, gstInclAmount }
   }
 
@@ -261,13 +289,22 @@ export default function useQuoteCalculator() {
    * @returns 扣减金额分类统计
    */
   function calculateFixedDeductionsTotalAmount(deductionObject: Record<string, any>) {
+    console.log('计算固定扣减项, deductionObject:', deductionObject)
+
     if (!deductionObject?.deduction) {
+      console.log('没有固定扣减项，返回0')
       return { gstFreeAmount: 0, gstExclAmount: 0, gstInclAmount: 0 }
     }
 
     try {
+      // 确保deduction是一个字符串
+      const deductionStr = typeof deductionObject.deduction === 'object'
+        ? JSON.stringify(deductionObject.deduction)
+        : deductionObject.deduction;
+
       // 解析扣减数据
-      const parsedData = JSON.parse(deductionObject.deduction)
+      const parsedData = JSON.parse(deductionStr)
+      console.log('解析后的固定扣减数据:', parsedData)
 
       // 使用映射计算各种补贴
       const deductionItems = auDeductionKeys.map((item) => {
@@ -281,6 +318,8 @@ export default function useQuoteCalculator() {
         return mapAuDecItem(itemData)
       }).filter(item => item?.switch && item?.support)
 
+      console.log('有效固定扣减项:', deductionItems)
+
       // 按GST类型分组
       const gstFreeItems = deductionItems.filter(item => item.gstType === 'gst_free')
       const exclGstItems = deductionItems.filter(item => item.gstType === 'excl_gst')
@@ -289,12 +328,19 @@ export default function useQuoteCalculator() {
       )
 
       // 计算各组合计
-      const gstFreeAmount = calcSum(gstFreeItems, () => gstFreeItems.map(item => item.linePrice || 0))
+      const gstFreeAmount = calcSum(gstFreeItems, () => gstFreeItems.map(item => ({
+        itemPrice: Number(item.linePrice || 0)
+      })))
 
-      const gstExclAmount = calcSum(exclGstItems, () => exclGstItems.map(item => item.linePrice || 0))
+      const gstExclAmount = calcSum(exclGstItems, () => exclGstItems.map(item => ({
+        itemPrice: Number(item.linePrice || 0)
+      })))
 
-      const gstInclAmount = calcSum(inclGstItems, () => inclGstItems.map(item => item.linePrice || 0))
+      const gstInclAmount = calcSum(inclGstItems, () => inclGstItems.map(item => ({
+        itemPrice: Number(item.linePrice || 0)
+      })))
 
+      console.log(`固定扣减项合计: 免税=${gstFreeAmount}, 不含税=${gstExclAmount}, 含税=${gstInclAmount}`)
       return { gstFreeAmount, gstExclAmount, gstInclAmount }
     } catch (err) {
       console.error('Error calculating fixed deductions:', err)
@@ -318,20 +364,30 @@ export default function useQuoteCalculator() {
     discountAmountExclRate: number,
     discountAmountInclRate: number
   ) {
-    // 含税最终价格 - 直接相加(注意扣减和折扣为负值)
+    console.log(`计算最终价格参数:
+      系统总价(不含税)=${systemTotalExclRate},
+      系统总价(含税)=${systemTotalInclRate},
+      免税扣减=${deductionsGstFree},
+      折扣(不含税)=${discountAmountExclRate},
+      折扣(含税)=${discountAmountInclRate}`)
+
+    // 含税最终价格 = 含税系统总价 - 免税扣减 - 含税折扣
+    // 修复：确保计算使用数字类型
     const finalPriceInclRate = calc('systemTotalInclRate - deductionsGstFree - discountAmountInclRate')({
-      systemTotalInclRate,
-      deductionsGstFree,
-      discountAmountInclRate
+      systemTotalInclRate: Number(systemTotalInclRate) || 0,
+      deductionsGstFree: Number(deductionsGstFree) || 0,
+      discountAmountInclRate: Number(discountAmountInclRate) || 0
     })
 
-    // 不含税最终价格 - 按公式：不含税系统价 - 免税扣减 - 不含税折扣
+    // 不含税最终价格 = 不含税系统价 - 免税扣减 - 不含税折扣
+    // 修复：确保计算使用数字类型
     const finalPriceExclRate = calc('systemTotalExclRate - deductionsGstFree - discountAmountExclRate')({
-      systemTotalExclRate,
-      deductionsGstFree,
-      discountAmountExclRate
+      systemTotalExclRate: Number(systemTotalExclRate) || 0,
+      deductionsGstFree: Number(deductionsGstFree) || 0,
+      discountAmountExclRate: Number(discountAmountExclRate) || 0
     })
 
+    console.log(`计算得到最终价格: 含税=${finalPriceInclRate}, 不含税=${finalPriceExclRate}`)
     return { finalPriceInclRate, finalPriceExclRate }
   }
 
@@ -351,25 +407,40 @@ export default function useQuoteCalculator() {
     deductionsGstFree: number,
     taxRateValue: number
   ) {
+    console.log(`计算总成本参数:
+      主产品成本=${keyProductsCost},
+      BOS成本=${bosCost},
+      AC成本=${acCost},
+      免税扣减=${deductionsGstFree},
+      税率=${taxRateValue}`)
+
     // 不含税成本总和
+    // 修复：确保计算使用数字类型
     const lineCostsSum = calc('keyProductsCost + bosCost + acCost')({
-      keyProductsCost,
-      bosCost,
-      acCost
+      keyProductsCost: Number(keyProductsCost) || 0,
+      bosCost: Number(bosCost) || 0,
+      acCost: Number(acCost) || 0
     })
+    console.log(`不含税成本总和: ${lineCostsSum}`)
 
-    // 含税总成本 - 成本总和(含税) - 免税扣减
+    // 含税总成本 = 成本总和(含税) - 免税扣减
+    // 修复：确保计算使用数字类型
     const totalCostInclRate = calc('costWithTax - deductionsGstFree')({
-      costWithTax: calcWithTaxRate({ basePrice: lineCostsSum, taxRate: taxRateValue }),
-      deductionsGstFree
+      costWithTax: calcWithTaxRate({
+        basePrice: Number(lineCostsSum) || 0,
+        taxRate: Number(taxRateValue) || 0
+      }),
+      deductionsGstFree: Number(deductionsGstFree) || 0
     })
 
-    // 不含税总成本 - 成本总和 - 免税扣减
+    // 不含税总成本 = 成本总和 - 免税扣减
+    // 修复：确保计算使用数字类型
     const totalCostExclRate = calc('lineCostsSum - deductionsGstFree')({
-      lineCostsSum,
-      deductionsGstFree
+      lineCostsSum: Number(lineCostsSum) || 0,
+      deductionsGstFree: Number(deductionsGstFree) || 0
     })
 
+    console.log(`计算得到总成本: 含税=${totalCostInclRate}, 不含税=${totalCostExclRate}`)
     return { totalCostInclRate, totalCostExclRate, lineCostsSum }
   }
 
@@ -380,19 +451,26 @@ export default function useQuoteCalculator() {
    * @returns 毛利和毛利率
    */
   function calculateProfitAndMargin(finalPriceExclRate: number, totalCostExclRate: number) {
+    console.log(`计算毛利参数: 不含税最终价格=${finalPriceExclRate}, 不含税总成本=${totalCostExclRate}`)
+
     // 毛利(不含税)
+    // 修复：确保计算使用数字类型
     const grossProfitExclRate = calcGrossProfit({
-      price: finalPriceExclRate,
-      cost: totalCostExclRate
+      price: Number(finalPriceExclRate) || 0,
+      cost: Number(totalCostExclRate) || 0
     })
+    console.log(`毛利(不含税): ${grossProfitExclRate}`)
 
     // 毛利率(不含税) - 避免除零错误
     let grossMarginExclRate = 0
     if (finalPriceExclRate > 0) {
-      grossMarginExclRate = calcMarginPercentage({
-        profit: grossProfitExclRate,
-        price: finalPriceExclRate
+      grossMarginExclRate = +calcMarginPercentage({
+        profit: Number(grossProfitExclRate) || 0,
+        price: Number(finalPriceExclRate) || 0
       })
+      console.log(`毛利率(不含税): ${grossMarginExclRate}%`)
+    } else {
+      console.log('最终价格为0，毛利率设为0')
     }
 
     return { grossProfitExclRate, grossMarginExclRate }
@@ -422,49 +500,60 @@ export default function useQuoteCalculator() {
     // 1. 根据折扣类型计算系统总价(含税)
     let fixedSystemTotalInclRate = 0
 
+    // 修复：确保计算使用数字类型
+    const fixedFinalPriceInclRateNum = Number(fixedFinalPriceInclRate) || 0
+    const deductionsGstFreeNum = Number(deductionsGstFree) || 0
+    const bosTotalExclRateNum = Number(bosTotalExclRate) || 0
+    const acTotalExclRateNum = Number(acTotalExclRate) || 0
+    const taxRateValueNum = Number(taxRateValue) || 0
+    const totalCostExclRateNum = Number(totalCostExclRate) || 0
+    const totalCostInclRateNum = Number(totalCostInclRate) || 0
+
     if (discountDataValue.discountSwitch) {
       if (discountDataValue.discountType === 2) { // 百分比折扣
         // 计算折扣因子: (100 - 折扣百分比) / 100
-        const discountFactor = calcDiscountFactor({ discountPercent: discountDataValue.discountRatio || 0 })
+        const discountFactor = calcDiscountFactor({
+          discountPercent: Number(discountDataValue.discountRatio) || 0
+        })
 
         // 反向计算系统总价: (最终价格 + 扣减) / 折扣因子
-        fixedSystemTotalInclRate = calc('(finalPrice + deduction) / factor')({
-          finalPrice: fixedFinalPriceInclRate,
-          deduction: deductionsGstFree,
+        fixedSystemTotalInclRate = +calc('(finalPrice + deduction) / factor')({
+          finalPrice: fixedFinalPriceInclRateNum,
+          deduction: deductionsGstFreeNum,
           factor: discountFactor
         })
       } else { // 金额折扣
         // 反向计算系统总价: 最终价格 + 扣减 + 折扣金额
-        fixedSystemTotalInclRate = calc('finalPrice + deduction + discount')({
-          finalPrice: fixedFinalPriceInclRate,
-          deduction: deductionsGstFree,
-          discount: discountDataValue.discountAmount || 0
+        fixedSystemTotalInclRate = +calc('finalPrice + deduction + discount')({
+          finalPrice: fixedFinalPriceInclRateNum,
+          deduction: deductionsGstFreeNum,
+          discount: Number(discountDataValue.discountAmount) || 0
         })
       }
     } else {
       // 无折扣: 最终价格 + 扣减
-      fixedSystemTotalInclRate = calc('finalPrice + deduction')({
-        finalPrice: fixedFinalPriceInclRate,
-        deduction: deductionsGstFree
+      fixedSystemTotalInclRate = +calc('finalPrice + deduction')({
+        finalPrice: fixedFinalPriceInclRateNum,
+        deduction: deductionsGstFreeNum
       })
     }
 
     // 2. 计算系统税额和不含税系统总价
-    const fixedSystemTaxAmount = calc('price * rate / (1 + rate)')({
+    const fixedSystemTaxAmount = +calc('price * rate / (1 + rate)')({
       price: fixedSystemTotalInclRate,
-      rate: taxRateValue
+      rate: taxRateValueNum
     })
 
-    const fixedSystemTotalExclRate = calc('totalPrice - taxAmount')({
+    const fixedSystemTotalExclRate = +calc('totalPrice - taxAmount')({
       totalPrice: fixedSystemTotalInclRate,
       taxAmount: fixedSystemTaxAmount
     })
 
     // 3. 计算固定价模式下的主产品价格
-    const fixedKeyProductsTotalExclRate = calc('systemTotal - bosTotal - acTotal')({
+    const fixedKeyProductsTotalExclRate = +calc('systemTotal - bosTotal - acTotal')({
       systemTotal: fixedSystemTotalExclRate,
-      bosTotal: bosTotalExclRate,
-      acTotal: acTotalExclRate
+      bosTotal: bosTotalExclRateNum,
+      acTotal: acTotalExclRateNum
     })
 
     // 4. 计算折扣金额
@@ -473,19 +562,19 @@ export default function useQuoteCalculator() {
 
     if (discountDataValue.discountSwitch) {
       if (discountDataValue.discountType === 1) { // 固定金额
-        fixedDiscountAmountInclRate = discountDataValue.discountAmount || 0
-        fixedDiscountAmountExclRate = calcExclRateFromInclRate({
+        fixedDiscountAmountInclRate = Number(discountDataValue.discountAmount) || 0
+        fixedDiscountAmountExclRate = +calcExclRateFromInclRate({
           priceInclRate: fixedDiscountAmountInclRate,
-          taxRate: taxRateValue
+          taxRate: taxRateValueNum
         })
       } else { // 百分比
-        const percentage = discountDataValue.discountRatio || 0
-        fixedDiscountAmountInclRate = calcPercentage({
+        const percentage = Number(discountDataValue.discountRatio) || 0
+        fixedDiscountAmountInclRate = +calcPercentage({
           value: fixedSystemTotalInclRate,
           percentage
         })
 
-        fixedDiscountAmountExclRate = calcPercentage({
+        fixedDiscountAmountExclRate = +calcPercentage({
           value: fixedSystemTotalExclRate,
           percentage
         })
@@ -493,27 +582,27 @@ export default function useQuoteCalculator() {
     }
 
     // 5. 计算固定价模式下的最终价格(不含税) - 按照业务公式
-    const fixedFinalPriceExclRate = calc('systemTotal - deductions - discount')({
+    const fixedFinalPriceExclRate = +calc('systemTotal - deductions - discount')({
       systemTotal: fixedSystemTotalExclRate,
-      deductions: deductionsGstFree,
+      deductions: deductionsGstFreeNum,
       discount: fixedDiscountAmountExclRate
     })
 
     // 6. 计算毛利和毛利率
-    const fixedGrossProfitExclRate = calcGrossProfit({
+    const fixedGrossProfitExclRate = +calcGrossProfit({
       price: fixedFinalPriceExclRate,
-      cost: totalCostExclRate
+      cost: totalCostExclRateNum
     })
 
-    const fixedGrossProfitInclRate = calcGrossProfit({
-      price: fixedFinalPriceInclRate,
-      cost: totalCostInclRate
+    const fixedGrossProfitInclRate = +calcGrossProfit({
+      price: fixedFinalPriceInclRateNum,
+      cost: totalCostInclRateNum
     })
 
     // 避免除零错误
     let fixedGrossMarginExclRate = 0
     if (fixedFinalPriceExclRate > 0) {
-      fixedGrossMarginExclRate = calcMarginPercentage({
+      fixedGrossMarginExclRate = +calcMarginPercentage({
         profit: fixedGrossProfitExclRate,
         price: fixedFinalPriceExclRate
       })
@@ -526,7 +615,7 @@ export default function useQuoteCalculator() {
       fixedKeyProductsTotalExclRate,
       fixedDiscountAmountInclRate,
       fixedDiscountAmountExclRate,
-      fixedFinalPriceInclRate,
+      fixedFinalPriceInclRate: fixedFinalPriceInclRateNum,
       fixedFinalPriceExclRate,
       fixedGrossProfitExclRate,
       fixedGrossProfitInclRate,
@@ -539,49 +628,58 @@ export default function useQuoteCalculator() {
    * @returns 计算结果
    */
   function calculateBillInfo() {
+    // console.log('===== 开始计算账单信息 =====')
+
     // 1. 计算各产品组的总价(不含税)和总成本
     const keyProductsTotalExclRate = calculateProductGroupTotalExclRate(keyProductList.value)
     const keyProductsTotalCost = calculateProductGroupTotalCostExclRate(keyProductList.value)
+    // console.log(`主产品总计: 价格=${keyProductsTotalExclRate}, 成本=${keyProductsTotalCost}`)
 
     const bosTotalExclRate = calculateProductGroupTotalExclRate(bosList.value)
     const bosTotalCost = calculateProductGroupTotalCostExclRate(bosList.value)
+    // console.log(`服务项目总计: 价格=${bosTotalExclRate}, 成本=${bosTotalCost}`)
 
     const acTotalExclRate = calculateProductGroupTotalExclRate(acList.value)
     const acTotalCost = calculateProductGroupTotalCostExclRate(acList.value)
+    // console.log(`附加项总计: 价格=${acTotalExclRate}, 成本=${acTotalCost}`)
 
     // 2. 计算系统总价(不含税和含税)
-    const systemTotalExclRate = calc('kpTotal + bosTotal + acTotal')({
+    const systemTotalExclRate = +calc('kpTotal + bosTotal + acTotal')({
       kpTotal: keyProductsTotalExclRate,
       bosTotal: bosTotalExclRate,
       acTotal: acTotalExclRate
     })
+    // console.log(`系统总价(不含税): ${systemTotalExclRate}`)
 
     const systemTaxAmount = calcTaxAmount({
       basePrice: systemTotalExclRate,
       taxRate: taxRate.value
     })
+    // console.log(`系统税额: ${systemTaxAmount}`)
 
     const systemTotalInclRate = calc('basePrice + taxAmount')({
       basePrice: systemTotalExclRate,
       taxAmount: systemTaxAmount
     })
+    // console.log(`系统总价(含税): ${systemTotalInclRate}`)
 
     // 3. 计算扣减项总额
     const customDeductionsInfo = calculateCustomDeductionsTotalAmount(customDeductionList.value)
     const fixedDeductionsInfo = calculateFixedDeductionsTotalAmount(defaultDeductions.value)
 
     // 合并所有扣减项
-    const deductionsGstFree = calc('customGstFree + fixedGstFree')({
+    const deductionsGstFree = +calc('customGstFree + fixedGstFree')({
       customGstFree: customDeductionsInfo.gstFreeAmount,
       fixedGstFree: fixedDeductionsInfo.gstFreeAmount
     })
+    // console.log(`合并免税扣减: ${deductionsGstFree}`)
 
-    const deductionsGstExcl = calc('customGstExcl + fixedGstExcl')({
+    const deductionsGstExcl = +calc('customGstExcl + fixedGstExcl')({
       customGstExcl: customDeductionsInfo.gstExclAmount,
       fixedGstExcl: fixedDeductionsInfo.gstExclAmount
     })
 
-    const deductionsGstIncl = calc('customGstIncl + fixedGstIncl')({
+    const deductionsGstIncl = +calc('customGstIncl + fixedGstIncl')({
       customGstIncl: customDeductionsInfo.gstInclAmount,
       fixedGstIncl: fixedDeductionsInfo.gstInclAmount
     })
@@ -605,10 +703,10 @@ export default function useQuoteCalculator() {
 
     // 6. 计算成本信息
     const { totalCostInclRate, totalCostExclRate, lineCostsSum } = calculateTotalCostWithTaxConsideration(
-      keyProductsTotalCost,
-      bosTotalCost,
-      acTotalCost,
-      deductionsGstFree,
+      +keyProductsTotalCost,
+      +bosTotalCost,
+      +acTotalCost,
+      +deductionsGstFree,
       taxRate.value
     )
 
@@ -632,7 +730,10 @@ export default function useQuoteCalculator() {
 
       // 扣减信息
       customDeductionPriceInclRate: deductionsGstFree,
-      customDeductionRate: 0, // 这里可能需要进一步计算
+      // 修复：计算扣减项比率，避免除零错误
+      customDeductionRate: Number(systemTotalInclRate) > 0
+        ? calc('current / total * 100 | =2', { current: deductionsGstFree, total: systemTotalInclRate })
+        : 0,
 
       // 折扣信息
       discountAmount: discountAmountInclRate,
@@ -705,7 +806,7 @@ export default function useQuoteCalculator() {
    * 设置账单信息
    * @param newValue 新值
    */
-  const setBillInfo = (newValue: Partial<Record<BillInfoKeys, number | null>>) => {
+  const setBillInfo = (newValue: Partial<Record<string, number | null>>) => {
     billInfoValue.value = newValue as Record<string, any>
     if (finalGroup.value.fixedPriceFlag) {
       finalGroup.value.finalPrice = newValue.fixedFinalPrice as number
@@ -961,9 +1062,48 @@ export const deductionFieldMappings: Array<{
   }
 ]
 
-// 添加这个辅助函数
+// 类型声明 - 确保类型安全
+export type fixedAuBaseItemType = 'stc'
+  | 'stcBattery'
+  | 'vic'
+  | 'vicPv'
+  | 'vicBattery'
+  | 'bess1'
+  | 'bess2'
+
+// 修复：添加缺失的类型定义
+export interface FixedAuDeductionBaseItem {
+  support: number
+  switch: number
+  isHideItem: number
+  isHidePrice: number
+  gstType: string
+  linePrice: number
+  type: fixedAuBaseItemType
+  labelKey: string
+  installationYear?: number
+  quantity?: number
+  unitPrice?: number
+  [key: string]: any
+}
+
+// 修复：添加缺失的辅助函数
+function isObject(val: any): boolean {
+  return val !== null && typeof val === 'object' && !Array.isArray(val)
+}
+
+function isString(val: any): boolean {
+  return typeof val === 'string' || val instanceof String
+}
+
+// 修复：添加缺失的函数，确保值是数字
 export function ensureNumber(value: any): number {
+  // 处理特殊情况：字符串 "-"
   if (typeof value === 'string' && value === '-') return 0
+
+  // 转换为数字
   const num = Number(value)
+
+  // 检查是否为有效数字
   return isNaN(num) ? 0 : num
 }
